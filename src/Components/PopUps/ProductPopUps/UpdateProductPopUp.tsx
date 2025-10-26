@@ -43,28 +43,26 @@ export default function UpdateProductDialog({
   const handleClose = () => setOpen(false);
 
   const updateProduct = async (id: number, updatedData: IUpdateProduct) => {
-    try {
-      const dataToSend = base64Image
-        ? { ...updatedData, pictureBase64: base64Image }
-        : updatedData;
+  try {
+    const dataToSend = base64Image
+      ? { ...updatedData, pictureBase64: base64Image }
+      : updatedData;
 
-      const response = await api.Products.updateProduct(id, dataToSend);
-      const updatedProduct: IProduct = response.data;
+    const response = await api.Products.updateProduct(id, dataToSend);
 
-      setAlertSeverity('success');
-      setAlertMessage('Product updated successfully!');
-      onUpdate?.(updatedProduct);
-
-      return true;
-    } catch (error: any) {
-      console.error('Error updating product:', error.message);
-      setAlertSeverity('error');
-      setAlertMessage(error.message || 'Unknown error');
-      return false;
-    }
-  };
+    setAlertSeverity('success');
+    setAlertMessage('Product updated successfully!');
+    
+    return true; // itt visszaadjuk a tényleges terméket
+  } catch (error: any) {
+    console.error('Error updating product:', error.message);
+    setAlertSeverity('error');
+    setAlertMessage(error.message || 'Unknown error');
+    return null;
+  }
+};
   
-  let picture : string;
+
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -74,7 +72,7 @@ export default function UpdateProductDialog({
       name: formData.get("name") as string | null,
       ean: formData.get("ean") as string | null,
       description: formData.get("description") as string | null,
-      image: picture
+      image: base64Image
     }
 
     if(newProduct.name !== undefined && newProduct.name !== null && newProduct.name.length < 1){
@@ -86,15 +84,22 @@ export default function UpdateProductDialog({
     if(newProduct.description !== undefined && newProduct.description !== null && newProduct.description.length < 1){
       newProduct.description = null;
     }
-    if(newProduct.image !== undefined && newProduct.image !== null){
+    if(newProduct.image !== undefined && newProduct.image !== null && newProduct.image.length < 1){
       newProduct.image = null;
     }
-
-    const success = await updateProduct(id, newProduct)
-
+  
+    const success = await updateProduct(id, newProduct);
+    //const updatedProduct = response.data; //ez jönne a backendből
+    const updatedData: IProduct = {
+    id: initialValues.id, // mindig kell az ID
+    ean: (formData.get("ean") as string) || initialValues.ean,
+    name: (formData.get("name") as string) || initialValues.name,
+    description: (formData.get("description") as string) || initialValues.description,
+    image: base64Image || initialValues.image,
+  };
     if (success) {
       handleClose();
-      window.location.reload();
+      onUpdate?.(updatedData); // tényleges backendből visszaadott termék
     }
   };
 
@@ -108,7 +113,6 @@ export default function UpdateProductDialog({
       const base64String = (reader.result as string).split(',')[1]; 
       setBase64Image(base64String);
       console.log('Base64 kód:', base64String.substring(0, 50) + '...');
-      picture = base64String;
     };
 
     reader.readAsDataURL(file);

@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import BlockIcon from '@mui/icons-material/Block';
 import '../PopUpCSS.css';
 import  api  from '../../../api/api';
-import { ICreateProduct } from '../../../Interfaces/IProduct';
+import { ICreateProduct, IProduct } from '../../../Interfaces/IProduct';
 
 interface FormDialogProps<T> {
   text: string;
@@ -172,5 +172,153 @@ export default function CreateProductDialog<T>({
         </Button>
       </DialogActions>
     </Dialog>
+  );
+}
+
+export function CreateProductDialogButton({
+  text,
+  dialogTitle,
+  dialogContent,
+  acceptText,
+  cancelText,
+  defaultEAN,
+  onUpdate,
+}: FormDialogProps<IProduct>) {
+  const [open, setOpen] = React.useState(false);
+  const [base64Image, setBase64Image] = React.useState<string>('');
+  const [alertMessage, setAlertMessage] = React.useState<string | null>(null);
+  const [alertSeverity, setAlertSeverity] = React.useState<'success' | 'error'>('success');
+
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => setBase64Image(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+
+  // Az új termék az űrlap alapján
+  //const createdProduct = response.data; //ez jönne a backendből
+  const newProduct: IProduct = {
+    id: Math.floor(Math.random() * 1000000), // ideiglenes ID
+    name: formData.get("name") as string,
+    ean: formData.get("ean") as string,
+    description: formData.get("description") as string,
+    image: base64Image || null
+  };
+
+  try {
+    await api.Products.createProduct(newProduct); // backend meghívása
+    onUpdate?.(newProduct); // frissítés a listában frontend oldalon
+    setOpen(false);
+    setAlertSeverity('success');
+    setAlertMessage('Product created successfully!');
+  } catch (error: any) {
+    setAlertSeverity('error');
+    setAlertMessage(
+      error.response?.data?.message || error.message || 'An unknown error occurred while creating the product.'
+    );
+  }
+};
+
+  return (
+    <>    
+      <Button variant="outlined" onClick={handleClickOpen} className="createButton">
+          {text}
+      </Button>
+
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialogContent}</DialogContentText>
+
+          {alertMessage && (
+            <Alert
+              icon={<BlockIcon fontSize="inherit" />}
+              severity={alertSeverity}
+              onClose={() => setAlertMessage(null)}
+              style={{ marginBottom: '1rem' }}
+            >
+              {alertMessage}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} id="product-form">
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="ean"
+              name="ean"
+              label="EAN"
+              type="text"
+              fullWidth
+              variant="standard"
+              defaultValue={defaultEAN || ''}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="name"
+              name="name"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+            <TextField
+              margin="dense"
+              id="description"
+              name="description"
+              label="Description"
+              type="text"
+              fullWidth
+              multiline
+              minRows={2}
+              variant="standard"
+            />
+
+            <div className="upload-section" style={{ marginTop: '20px' }}>
+              <input
+                accept="image/*"
+                id="image-upload"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleImageUpload}
+              />
+              <label htmlFor="image-upload">
+                <Button variant="contained" component="span" className="uploadButton">
+                  Upload Image
+                </Button>
+              </label>
+              {base64Image && (
+                <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                  <img
+                    src={base64Image}
+                    alt="Preview"
+                    style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }}
+                  />
+                </div>
+              )}
+            </div>
+          </form>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleClose} className="cancelButton">{cancelText}</Button>
+          <Button type="submit" form="product-form" className="acceptButton">{acceptText}</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

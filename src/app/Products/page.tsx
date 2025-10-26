@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PillNavFull from '../../Components/NavBar/PillNav/PillNavWithItems';
 import { IProduct } from '../../Interfaces/IProduct';
 import VirtuosoTable, { ColumnData } from '../../Components/DataTable/DataTable';
-import CreateProductDialog from '../../Components/PopUps/ProductPopUps/CreateProductPopUp';
+import { CreateProductDialogButton } from '../../Components/PopUps/ProductPopUps/CreateProductPopUp';
 import UpdateProductDialog from '../../Components/PopUps/ProductPopUps/UpdateProductPopUp';
 import DeleteProductDialog from '../../Components/PopUps/ProductPopUps/DeleteProductPopUp';
 import api from '../../api/api';
@@ -49,8 +49,8 @@ export default function Products() {
     );
   };
 
-  const handleDelete = (deleted: IProduct) => {
-    setProducts(prev => prev.filter(p => p.id !== deleted.id));
+  const handleDelete = (deletedId: number)  => {
+    setProducts(prev => prev.filter(product => product.id !== deletedId));
   };
 
   const handleCreate = (created: IProduct) => {
@@ -87,16 +87,16 @@ export default function Products() {
             dialogContent={`Are you sure you want to delete ${row.name} product?`}
             acceptText="Delete"
             cancelText="Cancel"
-            onUpdate={handleUpdate}
+            onUpdate={handleDelete}
           />)}
           createButton={(
-            <CreateProductDialog
-            text="Create"
-            dialogTitle="Create product"
-            dialogContent={`Please add a name and a location`}
-            acceptText="Create"
-            cancelText="Cancel"
-            onUpdate={handleUpdate}
+            <CreateProductDialogButton
+              text="Create"
+              dialogTitle="Create product"
+              dialogContent={`Please add a name and a location`}
+              acceptText="Create"
+              cancelText="Cancel"
+              onUpdate={handleCreate}
             />
           )} 
         />

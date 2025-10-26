@@ -16,7 +16,7 @@ interface FormDialogProps {
   dialogContent: string;
   acceptText: string;
   cancelText: string;
-  onUpdate?: (updated: IWarehouse) => void;
+  onUpdate?: (updated: number) => void;
 }
 
 export default function DeleteWarehouseDialog({
@@ -35,15 +35,9 @@ export default function DeleteWarehouseDialog({
 
   const deleteWarehouse = async (id: number) => {
     try {
-      const response = await api.Warehouses.deleteWarehouse(id);
+      await api.Warehouses.deleteWarehouse(id);
 
-      if (response.status === 200 || response.status === 204) {
-        const deletedWarehouse = response.data as IWarehouse | undefined;
-        if (deletedWarehouse) {
-          onUpdate?.(deletedWarehouse);
-        }
-      }
-
+      onUpdate?.(id);
       console.log("Warehouse deleted successfully!");
     } catch (error: any) {
       console.error("Error deleting warehouse:", error.message || error);
@@ -53,7 +47,6 @@ export default function DeleteWarehouseDialog({
   const handleDelete = async () => {
     await deleteWarehouse(id);
     handleClose();
-    window.location.reload();
   };
 
   return (

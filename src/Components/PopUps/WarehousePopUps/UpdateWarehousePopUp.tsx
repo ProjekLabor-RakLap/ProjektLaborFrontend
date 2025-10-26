@@ -44,8 +44,9 @@ export default function UpdateWarehouseDialog({
     try {
       const response = await api.Warehouses.updateWarehouse(id, updatedData);
 
-      const updatedWarehouse: IWarehouse = response.data;
-
+      //const updatedWarehouse: IWarehouse = response.data;
+      const updatedWarehouse = updatedData as IWarehouse;
+      updatedWarehouse.id = id;
       setAlertSeverity('success');
       setAlertMessage('Warehouse updated successfully!');
       onUpdate?.(updatedWarehouse);

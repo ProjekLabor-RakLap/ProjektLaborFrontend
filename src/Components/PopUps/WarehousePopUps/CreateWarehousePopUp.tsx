@@ -11,6 +11,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import '../PopUpCSS.css';
 import { IWarehouse, ICreateWarehouse } from '../../../Interfaces/IWarehouse';
 import api from '../../../api/api';
+import { create } from 'domain';
 
 interface FormDialogProps<T> {
   text: string;
@@ -36,15 +37,17 @@ export default function CreateWarehouseDialog<T>({
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const createWarehouse = async (updatedData: ICreateWarehouse) => {
+  const createWarehouse = async (newWarehouse: ICreateWarehouse) => {
   try {
-    const response = await api.Warehouses.createWarehouse(updatedData);
+    const response = await api.Warehouses.createWarehouse(newWarehouse);
 
     if (response.status >= 200 && response.status < 300) {
       setAlertSeverity("success");
       setAlertMessage("Warehouse created successfully!");
 
-      const createdWarehouse = response.data;
+      //const createdWarehouse = response.data;
+      const createdWarehouse = newWarehouse as IWarehouse;
+      createdWarehouse.id = Math.floor(Math.random() * 1000000)
       onUpdate?.(createdWarehouse);
       return true;
     }
@@ -83,9 +86,9 @@ export default function CreateWarehouseDialog<T>({
 
   const success = await createWarehouse(newWarehouse);
 
-  if (success) {
-    window.location.reload();
-  }
+  // if (success) {
+  //   window.location.reload();
+  // }
 };
 
   return (

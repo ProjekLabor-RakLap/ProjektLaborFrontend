@@ -42,9 +42,8 @@ export default function DeleteProductDialog<T>({
 
       setAlertSeverity('success');
       setAlertMessage('Product deleted successfully!');
-      onUpdate?.(null as any);
+      onUpdate?.(id as any);
 
-      setTimeout(() => window.location.reload(), 1000);
     } catch (error: any) {
       console.error('Error deleting product:', error);
       setAlertSeverity('error');
