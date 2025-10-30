@@ -45,9 +45,9 @@ export default function CreateWarehouseDialog<T>({
       setAlertSeverity("success");
       setAlertMessage("Warehouse created successfully!");
 
-      //const createdWarehouse = response.data;
-      const createdWarehouse = newWarehouse as IWarehouse;
-      createdWarehouse.id = Math.floor(Math.random() * 1000000)
+      const createdWarehouse = response.data;
+      // const createdWarehouse = newWarehouse as IWarehouse;
+      // createdWarehouse.id = Math.floor(Math.random() * 1000000)
       onUpdate?.(createdWarehouse);
       return true;
     }
@@ -84,11 +84,8 @@ export default function CreateWarehouseDialog<T>({
     location: formData.get("location") as string,
   };
 
-  const success = await createWarehouse(newWarehouse);
-
-  // if (success) {
-  //   window.location.reload();
-  // }
+  await createWarehouse(newWarehouse);
+  handleClose();
 };
 
   return (

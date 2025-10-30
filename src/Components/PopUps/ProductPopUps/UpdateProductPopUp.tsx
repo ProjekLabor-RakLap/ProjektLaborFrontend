@@ -49,11 +49,12 @@ export default function UpdateProductDialog({
       : updatedData;
 
     const response = await api.Products.updateProduct(id, dataToSend);
+    const updatedProduct = response.data;
 
+    onUpdate?.(updatedProduct);
     setAlertSeverity('success');
     setAlertMessage('Product updated successfully!');
-    
-    return true; // itt visszaadjuk a tényleges terméket
+    return true;
   } catch (error: any) {
     console.error('Error updating product:', error.message);
     setAlertSeverity('error');
@@ -88,19 +89,17 @@ export default function UpdateProductDialog({
       newProduct.image = null;
     }
   
-    const success = await updateProduct(id, newProduct);
-    //const updatedProduct = response.data; //ez jönne a backendből
-    const updatedData: IProduct = {
-    id: initialValues.id, // mindig kell az ID
-    ean: (formData.get("ean") as string) || initialValues.ean,
-    name: (formData.get("name") as string) || initialValues.name,
-    description: (formData.get("description") as string) || initialValues.description,
-    image: base64Image || initialValues.image,
-  };
-    if (success) {
-      handleClose();
-      onUpdate?.(updatedData); // tényleges backendből visszaadott termék
-    }
+    await updateProduct(id, newProduct);
+    handleClose();
+     //ez jönne a backendből
+  //   const updatedData: IProduct = {
+  //   id: initialValues.id, // mindig kell az ID
+  //   ean: (formData.get("ean") as string) || initialValues.ean,
+  //   name: (formData.get("name") as string) || initialValues.name,
+  //   description: (formData.get("description") as string) || initialValues.description,
+  //   image: base64Image || initialValues.image,
+  // };
+    
   };
 
   const handleFileSelect = (files: FileList | null) => {
