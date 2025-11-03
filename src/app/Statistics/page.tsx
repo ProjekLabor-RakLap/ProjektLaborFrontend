@@ -13,11 +13,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { PieChart, SparkLineChart } from '@mui/x-charts';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardActionArea, CardContent, CardMedia, Chip, Typography } from '@mui/material';
 
 function Statistics() {
   const [warehouses, setWarehouses] = React.useState<IWarehouse[]>([]);
   const [products, setProducts] = React.useState<IProduct[]>([]);
+  const [mostsold, setMostsold] = React.useState<IProduct>();
   const [stockChanges, setStockChanges] = React.useState<IStockChange[]>([]);
   const [weeklyData, setWeeklyData] = React.useState<IStockChange[]>([]);
   const [stock, setStock] = React.useState<IStock>();
@@ -83,6 +84,26 @@ function Statistics() {
     };
 
     fetchProducts();
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    const mostsold = async () => {
+      if (!selectedWarehouse) return;
+      setLoadingProducts(true);
+      try {
+        const response = await fetch(
+          `https://localhost:7116/api/product/mostsold/${selectedWarehouse}`
+        );
+        const data = await response.json();
+        setMostsold(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    mostsold();
   }, [selectedWarehouse]);
 
   const handleChangeProduct = (event: any) => {
@@ -298,12 +319,21 @@ function Statistics() {
         )}
 
         {selectedWarehouse && (
-          <Card sx={{ maxWidth: 400, mx: 'auto', my: 3, bgcolor: 'background.paper' }}>
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'stretch', gap: '50px', marginBottom: '100px'}}>
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <Chip 
+    label="Previous Week Sales" 
+    color="primary" 
+    sx={{ mb: 1, fontWeight: 'bold' }} 
+      />
+          <Card sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        bgcolor: 'background.paper',
+      }}>
             <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom align="center">
-                Previous Week Sales
-              </Typography>
-              
               {loadingWeeklyData ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
                   <CircularProgress />
@@ -340,6 +370,48 @@ function Statistics() {
               )}
             </CardContent>
           </Card>
+          </Box>
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+  <Chip 
+    label="Most Sold Product" 
+    color="primary" 
+    sx={{ mb: 1, fontWeight: 'bold' }} 
+  />
+  <Card sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        bgcolor: 'background.paper',
+      }}>
+    <CardActionArea>
+      <CardMedia
+        component="img"
+        height="140"
+        image={`data:image/png;base64,${mostsold?.image ?? ''}`}
+        alt={mostsold?.name}
+        sx={{
+          height: 200,
+          objectFit: 'contain',
+          bgcolor: 'background.paper',
+          p: 1, 
+        }}
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {mostsold?.name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {mostsold?.description || 'No description available.'}
+        </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
+          EAN: {mostsold?.ean}
+        </Typography>
+      </CardContent>
+    </CardActionArea>
+  </Card>
+</Box>
+      </div>
         )}
 
         {selectedProduct && (
