@@ -9,7 +9,9 @@ const Products = {
     getProduct: (id: number) => axiosInstance.get<IProduct>(`/api/product/${id}`),
     deleteProduct: (id: number) => axiosInstance.delete<void>(`/api/product/${id}`),
     createProduct: (param: ICreateProduct) => axiosInstance.post<IProduct>(`/api/product`, param),
-    updateProduct: (id: number, param2 : IUpdateProduct) => axiosInstance.patch<IProduct>(`/api/product/${id}`, param2)
+    updateProduct: (id: number, param2 : IUpdateProduct) => axiosInstance.patch<IProduct>(`/api/product/${id}`, param2),
+    mostSold: (warehouseId: number) => axiosInstance.get<IProduct>(`/api/product/mostsold/${warehouseId}`),
+    stuckProducts: (warehouseId: number) => axiosInstance.get<IProduct[]>(`/api/product/stuckproducts/${warehouseId}`)
 }
 
 const Warehouses = {
@@ -26,7 +28,8 @@ const Stocks = {
     getStockByWarehouse: (id: number) => axiosInstance.get<IStock>(`/api/stock/get-stock-by-warehouse/${id}`),
     deleteStock: (id: number) => axiosInstance.delete<void>(`/api/stock/${id}`),
     createStock: (param: ICreateStock) => axiosInstance.post<ICreateStock>(`/api/stock`, param),
-    updateStock:  (id: number, param2: IUpdateStock) => axiosInstance.patch<IUpdateStock>(`/api/stock/${id}`,param2)
+    updateStock:  (id: number, param2: IUpdateStock) => axiosInstance.patch<IUpdateStock>(`/api/stock/${id}`,param2),
+    productStock: (productId: number) => axiosInstance.get<IStock>(`/api/stock/product/${productId}`)
 }
 
 const StockChanges = {
@@ -35,7 +38,9 @@ const StockChanges = {
     getStockChangeByWarehouse: (id: number) => axiosInstance.get<IStockChange>(`/api/stockchange/get-change-by-warehouse/${id}`),
     deleteStockChange: (id: number) => axiosInstance.delete<void>(`/api/stockchange/${id}`),
     createStockChange: (param: ICreateStockChange) => axiosInstance.post<ICreateStockChange>(`/api/stockchange`, param),
-    updateStockChange:  (id: number, param2: IUpdateStockChange) => axiosInstance.patch<IUpdateStockChange>(`/api/stockchange/${id}`,param2)
+    updateStockChange:  (id: number, param2: IUpdateStockChange) => axiosInstance.patch<IUpdateStockChange>(`/api/stockchange/${id}`,param2),
+    weeklyData: (warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/previous-week/${warehouseId}`),
+    warehouseProduct: (productId: number, warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse-product/${productId}-${warehouseId}`)
 }
 const api = {Products, Warehouses, Stocks, StockChanges}
 

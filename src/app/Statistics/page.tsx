@@ -13,12 +13,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { PieChart, SparkLineChart } from '@mui/x-charts';
-import { Card, CardActionArea, CardContent, CardMedia, Chip, Typography } from '@mui/material';
+import { Avatar, Card, CardActionArea, CardContent, CardMedia, Chip, Divider, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Typography } from '@mui/material';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import api from '../../api/api';
 
 function Statistics() {
   const [warehouses, setWarehouses] = React.useState<IWarehouse[]>([]);
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [mostsold, setMostsold] = React.useState<IProduct>();
+  const [stuckProducts, setStuckProducts] = React.useState<IProduct[]>([]);
   const [stockChanges, setStockChanges] = React.useState<IStockChange[]>([]);
   const [weeklyData, setWeeklyData] = React.useState<IStockChange[]>([]);
   const [stock, setStock] = React.useState<IStock>();
@@ -46,8 +49,8 @@ function Statistics() {
     const fetchWarehouses = async () => {
       setLoadingWarehouses(true);
       try {
-        const response = await fetch('https://localhost:7116/api/warehouse');
-        const data = await response.json();
+        const response = await api.Warehouses.getWarehouses();
+        const data = await response.data;
         setWarehouses(data);
       } catch (error) {
         console.error('Error fetching warehouses:', error);
@@ -71,11 +74,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/product/warehouse/${selectedWarehouse}`
-        );
-        const data = await response.json();
-        setProducts(data);
+        const response = await api.Products.getProducts();
+        setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -91,10 +91,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/product/mostsold/${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.Products.mostSold(selectedWarehouse)
+        const data = await response.data;
         setMostsold(data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -106,6 +104,24 @@ function Statistics() {
     mostsold();
   }, [selectedWarehouse]);
 
+  useEffect(() => {
+    const stuckproducts = async () => {
+      if (!selectedWarehouse) return;
+      setLoadingProducts(true);
+      try {
+        const response = await api.Products.stuckProducts(selectedWarehouse);
+        const data = await response.data;
+        setStuckProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    stuckproducts();
+  }, [selectedWarehouse]);
+
   const handleChangeProduct = (event: any) => {
     setSelectedProduct(event.target.value);
   };
@@ -115,10 +131,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingWeeklyData(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stockchange/previous-week/${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.StockChanges.weeklyData(selectedWarehouse);
+        const data = await response.data;
         setWeeklyData(data);
       } catch (error) {
         console.error('Error fetching weekly data:', error);
@@ -136,10 +150,8 @@ function Statistics() {
       setLoadingStockChanges(true);
 
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stockchange/warehouse-product/${selectedProduct}-${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.StockChanges.warehouseProduct(selectedProduct, selectedWarehouse);
+        const data = await response.data;
         setStockChanges(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching stock changes:', error);
@@ -156,10 +168,8 @@ function Statistics() {
       if (!selectedWarehouse || !selectedProduct) return;
       setLoadingStock(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stock/product/${selectedProduct}`
-        );
-        const data = await response.json();
+        const response = await api.Stocks.productStock(selectedProduct);
+        const data = await response.data;
         setStock(data);
       } catch (error) {
         console.error('Error fetching stock:', error);
@@ -319,100 +329,183 @@ function Statistics() {
         )}
 
         {selectedWarehouse && (
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'stretch', gap: '50px', marginBottom: '100px'}}>
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
-              <Chip 
-    label="Previous Week Sales" 
-    color="primary" 
-    sx={{ mb: 1, fontWeight: 'bold' }} 
-      />
-          <Card sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        bgcolor: 'background.paper',
-      }}>
-            <CardContent>
-              {loadingWeeklyData ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-                  <CircularProgress />
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "stretch",
+      gap: "50px",
+      marginBottom: "50px",
+      flexWrap: "wrap",
+    }}
+  >
+    {[
+      {
+        label: "Previous Week Sales",
+        color: "primary",
+        content: (
+          <CardContent sx={{ flexGrow: 1 }}>
+            {loadingWeeklyData ? (
+              <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : weeklySalesData && weeklySalesData.length > 0 ? (
+              <>
+                <SparkLineChart
+                  data={weeklySalesData}
+                  height={150}
+                  area
+                  showTooltip
+                  showHighlight
+                />
+                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+                  {dayLabels.map((day) => (
+                    <Typography key={day} variant="caption" align="center">
+                      {day}
+                    </Typography>
+                  ))}
                 </Box>
-              ) : weeklySalesData && weeklySalesData.length > 0 ? (
-                <>
-                  <SparkLineChart
-                    data={weeklySalesData}
-                    height={150}
-                    area
-                    showTooltip
-                    showHighlight
-                  />
-                  
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                    {dayLabels.map((day, index) => (
-                      <Typography key={day} variant="caption" align="center">
-                        {day}
-                      </Typography>
-                    ))}
-                  </Box>
-                  
-                  <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                    Total Sales: <strong>{totalWeeklySales}</strong> units
-                  </Typography>
-                  <Typography variant="caption" display="block" align="center" color="text.secondary">
-                    {weeklyData.length} sales transactions
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body2" align="center" color="text.secondary" sx={{ py: 4 }}>
-                  No sales data available for previous week
+                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                  Total Sales: <strong>{totalWeeklySales}</strong> units
                 </Typography>
-              )}
+                <Typography variant="caption" display="block" align="center" color="text.secondary">
+                  {weeklyData.length} sales transactions
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="body2" align="center" color="text.secondary" sx={{ py: 4 }}>
+                No sales data available for previous week
+              </Typography>
+            )}
+          </CardContent>
+        ),
+      },
+      {
+        label: "Most Sold Product",
+        color: "primary",
+        content: (
+          <CardActionArea sx={{ flexGrow: 1 }}>
+            <CardMedia
+              component="img"
+              image={`data:image/png;base64,${mostsold?.image ?? ""}`}
+              alt={mostsold?.name}
+              sx={{
+                height: 200,
+                objectFit: "contain",
+                bgcolor: "background.paper",
+                p: 1,
+              }}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                {mostsold?.name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {mostsold?.description || "No description available."}
+              </Typography>
+              <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
+                EAN: {mostsold?.ean}
+              </Typography>
             </CardContent>
-          </Card>
-          </Box>
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
-  <Chip 
-    label="Most Sold Product" 
-    color="primary" 
-    sx={{ mb: 1, fontWeight: 'bold' }} 
-  />
-  <Card sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        bgcolor: 'background.paper',
-      }}>
-    <CardActionArea>
-      <CardMedia
-        component="img"
-        height="140"
-        image={`data:image/png;base64,${mostsold?.image ?? ''}`}
-        alt={mostsold?.name}
+          </CardActionArea>
+        ),
+      },
+      {
+        label: "Unpopular Products",
+        color: "error",
+        content: (
+          <List
+            sx={{
+              flexGrow: 1,
+              overflow: "auto",
+              maxHeight: "100%",
+            }}
+            subheader={
+              <ListSubheader
+                sx={{
+                  bgcolor: "background.paper",
+                  fontWeight: "bold",
+                  color: "error.main",
+                  textAlign: "center",
+                }}
+              >
+                Unpopular Products
+              </ListSubheader>
+            }
+          >
+            {stuckProducts && stuckProducts.length > 0 ? (
+              stuckProducts.map((product) => (
+                <React.Fragment key={product.id}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: "error.main" }}>
+                        <InventoryIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold" color="text.secondary">
+                          {product.name}
+                        </Typography>
+                      }
+                      secondary={
+                        <>
+                          <Typography variant="body2" color="text.secondary">
+                            EAN: {product.ean}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {product.description || "No description available"}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                </React.Fragment>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText
+                  primary="No stuck products found"
+                  sx={{ textAlign: "center", color: "text.secondary" }}
+                />
+              </ListItem>
+            )}
+          </List>
+        ),
+      },
+    ].map(({ label, color, content }) => (
+      <Box
+        key={label}
         sx={{
-          height: 200,
-          objectFit: 'contain',
-          bgcolor: 'background.paper',
-          p: 1, 
+          flex: 1,
+          minWidth: 350,
+          maxWidth: 400,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
         }}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {mostsold?.name}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {mostsold?.description || 'No description available.'}
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
-          EAN: {mostsold?.ean}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-  </Card>
-</Box>
-      </div>
-        )}
+      >
+        <Chip label={label} color={color as "primary" | "error"} sx={{ mb: 1, fontWeight: "bold" }} />
+        <Card
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: 450,
+            width: "100%",
+            bgcolor: "background.paper",
+          }}
+        >
+          {content}
+        </Card>
+      </Box>
+    ))}
+  </Box>
+)}
+
 
         {selectedProduct && (
           <>
