@@ -8,6 +8,8 @@ import Statistics from './app/Statistics/page';
 import Profile from './app/Profile/page';
 import StockChange from './app/StockChange/page';
 import Products from './app/Products/page';
+import LoginPage from './app/Login/page';
+import RegisterPage from './app/Register/page';
 function App() {
   return (
     <Router>
@@ -19,7 +21,8 @@ function App() {
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/stock-change" element={<StockChange />} />
         <Route path="/profile" element={<Profile />} />
-        
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

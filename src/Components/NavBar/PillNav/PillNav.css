@@ -4,7 +4,7 @@
   z-index: 99;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pill-nav-container {
     width: 100%;
     left: 0;
@@ -22,7 +22,7 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pill-nav {
     width: 100%;
     justify-content: space-between;
@@ -153,7 +153,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .desktop-only {
     display: none;
   }
@@ -179,7 +179,7 @@
   position: relative;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .mobile-menu-button {
     display: flex;
   }
