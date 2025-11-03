@@ -209,8 +209,7 @@ export function CreateProductDialogButton({
 
   // Az új termék az űrlap alapján
   //const createdProduct = response.data; //ez jönne a backendből
-  const newProduct: IProduct = {
-    id: Math.floor(Math.random() * 1000000), // ideiglenes ID
+  const newProduct: ICreateProduct = {
     name: formData.get("name") as string,
     ean: formData.get("ean") as string,
     description: formData.get("description") as string,
@@ -218,8 +217,8 @@ export function CreateProductDialogButton({
   };
 
   try {
-    await api.Products.createProduct(newProduct); // backend meghívása
-    onUpdate?.(newProduct); // frissítés a listában frontend oldalon
+    const createdProduct = await api.Products.createProduct(newProduct); // backend meghívása
+    onUpdate?.(createdProduct.data); // frissítés a listában frontend oldalon
     setOpen(false);
     setAlertSeverity('success');
     setAlertMessage('Product created successfully!');
