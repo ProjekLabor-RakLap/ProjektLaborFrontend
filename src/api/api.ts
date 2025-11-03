@@ -11,7 +11,8 @@ const Products = {
     createProduct: (param: ICreateProduct) => axiosInstance.post<IProduct>(`/api/product`, param),
     updateProduct: (id: number, param2 : IUpdateProduct) => axiosInstance.patch<IProduct>(`/api/product/${id}`, param2),
     mostSold: (warehouseId: number) => axiosInstance.get<IProduct>(`/api/product/mostsold/${warehouseId}`),
-    stuckProducts: (warehouseId: number) => axiosInstance.get<IProduct[]>(`/api/product/stuckproducts/${warehouseId}`)
+    stuckProducts: (warehouseId: number) => axiosInstance.get<IProduct[]>(`/api/product/stuckproducts/${warehouseId}`),
+    getProductsByWarehouse: (warehouseId: number) => axiosInstance.get<IProduct[]>(`/api/product/warehouse/${warehouseId}`)
 }
 
 const Warehouses = {
@@ -19,7 +20,8 @@ const Warehouses = {
     getWarehouse: (id: number) => axiosInstance.get<IWarehouse>(`/api/warehouse/${id}`),
     deleteWarehouse: (id: number) => axiosInstance.delete<IWarehouse>(`/api/warehouse/${id}`),
     createWarehouse: (param: ICreateWarehouse) => axiosInstance.post<IWarehouse>(`/api/warehouse`,param),
-    updateWarehouse: (id: number, param2: IUpdateWarehouse) => axiosInstance.patch<IWarehouse>(`/api/warehouse/${id}`, param2)
+    updateWarehouse: (id: number, param2: IUpdateWarehouse) => axiosInstance.patch<IWarehouse>(`/api/warehouse/${id}`, param2),
+    productsSold: (warehouseId: number) => axiosInstance.get<{[productName: string] : number}>(`/api/warehouse/productssold/${warehouseId}`)
 } 
 
 const Stocks = {

@@ -12,7 +12,7 @@ import InputLabel from '@mui/material/InputLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { PieChart, SparkLineChart } from '@mui/x-charts';
+import { BarChart, PieChart, SparkLineChart } from '@mui/x-charts';
 import { Avatar, Card, CardActionArea, CardContent, CardMedia, Chip, Divider, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Typography } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import api from '../../api/api';
@@ -22,6 +22,7 @@ function Statistics() {
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [mostsold, setMostsold] = React.useState<IProduct>();
   const [stuckProducts, setStuckProducts] = React.useState<IProduct[]>([]);
+  const [productsSold, setProductsSold] = React.useState<{[productName: string] : number}>();
   const [stockChanges, setStockChanges] = React.useState<IStockChange[]>([]);
   const [weeklyData, setWeeklyData] = React.useState<IStockChange[]>([]);
   const [stock, setStock] = React.useState<IStock>();
@@ -74,7 +75,7 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await api.Products.getProducts();
+        const response = await api.Products.getProductsByWarehouse(selectedWarehouse);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -120,6 +121,24 @@ function Statistics() {
     };
 
     stuckproducts();
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    const productsSold = async () => {
+      if (!selectedWarehouse) return;
+      setLoadingProducts(true);
+      try {
+        const response = await api.Warehouses.productsSold(selectedWarehouse);
+        const data = await response.data;
+        setProductsSold(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    productsSold();
   }, [selectedWarehouse]);
 
   const handleChangeProduct = (event: any) => {
@@ -237,11 +256,22 @@ function Statistics() {
     return weeklyData.reduce((total, item) => total + Math.abs(item.quantity), 0);
   }, [weeklyData]);
 
+  const dataset = productsSold ? Object.entries(productsSold).map(([productName, sold]) => ({
+    product: productName,
+    sold: sold,
+  })) : [];
+
+  const valueFormatter = (value: number | null) => `${value ?? 0} pcs`;
+
+  const layout = dataset.length < 6 ? "vertical" : "horizontal";
+
   return (
     <div className="App">
       <header className="App-header">
         <PillNavFull />
 
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '20px', flexWrap: 'wrap', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
         <InputLabel
           variant="standard"
           htmlFor="warehouse-select"
@@ -249,6 +279,7 @@ function Statistics() {
         >
           Warehouse
         </InputLabel>
+        
 
         {loadingWarehouses ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
@@ -281,11 +312,12 @@ function Statistics() {
             ))}
           </Select>
         )}
+        </div>
 
         <br />
 
         {selectedWarehouse && (
-          <>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <InputLabel
               variant="standard"
               htmlFor="product-select"
@@ -325,8 +357,9 @@ function Statistics() {
                 ))}
               </Select>
             )}
-          </>
+          </div>
         )}
+        </div>
 
         {selectedWarehouse && (
   <Box
@@ -408,6 +441,39 @@ function Statistics() {
               </Typography>
             </CardContent>
           </CardActionArea>
+        ),
+      },
+      {
+        label: "Products Overall Sold",
+        color: "primary",
+        content: (
+          <CardActionArea sx={{ flexGrow: 1 }}>
+          <CardContent sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <Box sx={{ minHeight: 350, width: '100%' }}>
+              {layout === "horizontal" ? (
+                <BarChart 
+                  dataset={dataset} 
+                  yAxis={[{ scaleType: 'band', dataKey: 'product' }]} 
+                  series={[{ dataKey: 'sold', label: 'Products Sold', valueFormatter }]} 
+                  layout={"horizontal"} 
+                  width={undefined} 
+                  height={undefined} 
+                  sx={{ width: '100%', height: '100%' }} 
+                />
+              ) : (
+                <BarChart 
+                  dataset={dataset} 
+                  xAxis={[{ scaleType: 'band', dataKey: 'product' }]} 
+                  series={[{ dataKey: 'sold', label: 'Products Sold', valueFormatter }]} 
+                  layout={"vertical"} 
+                  width={undefined} 
+                  height={undefined} 
+                  sx={{ width: '100%', height: '100%' }} 
+                />
+              )}
+            </Box>
+          </CardContent>
+        </CardActionArea>
         ),
       },
       {
