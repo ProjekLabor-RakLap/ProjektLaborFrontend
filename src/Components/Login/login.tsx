@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
+import { IUserLogin } from "../../Interfaces/IUser";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -41,9 +43,14 @@ export default function Login() {
         e.preventDefault();
         setError("");
 
+        const loginData: IUserLogin = {
+            email: email,
+            password: password
+        }
+
         setLoading(true);
 
-        setTimeout(() => {
+        setTimeout(async () => {
             setLoading(false);
 
             if (!email || !password) {
@@ -56,97 +63,99 @@ export default function Login() {
                 return;
             }
 
-            if (email === "a@a.a" && password === "ASDasd1!") {
-                alert("✅ Login successful!");
-            } else {
-                setError("No");
+            try {
+                const response = await api.Users.login(loginData);
+                console.log(response.status);
+            } catch (error) {
+                console.error("Error loging in:", error);
             }
+            
         }, 1500);
-    };
+};
 
-    return (
-        <Paper
-            elevation={6}
-            sx={{
-                p: 4,
-                width: 360,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                borderRadius: 3,
-            }}
-        >
-            <Typography variant="h5" sx={{ mb: 2 }}>
-                Login
+return (
+    <Paper
+        elevation={6}
+        sx={{
+            p: 4,
+            width: 360,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderRadius: 3,
+        }}
+    >
+        <Typography variant="h5" sx={{ mb: 2 }}>
+            Login
+        </Typography>
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
+            <TextField
+                sx={{ width: '27ch' }}
+                label="Email"
+                variant="outlined"
+                margin="normal"
+                value={email}
+                placeholder="example@gmail.com"
+                onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <FormControl sx={{ width: '27ch' }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    value={password}
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="********"
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label={
+                                    showPassword ? 'hide the password' : 'display the password'
+                                }
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                onMouseUp={handleMouseUpPassword}
+                                edge="end"
+                            >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    label="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </FormControl>
+
+            {error && (
+                <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                    {error}
+                </Typography>
+            )}
+
+            <Typography variant="body2" sx={{ mt: 2 }}>
+                Don’t have an account?{" "}
+                <Link
+                    component="button"
+                    variant="body2"
+                    onClick={() => navigate("/register")}
+                    sx={{ fontWeight: 600 }}
+                >
+                    Register
+                </Link>
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-                <TextField
-                    sx={{ width: '27ch' }}
-                    label="Email"
-                    variant="outlined"
-                    margin="normal"
-                    value={email}
-                    placeholder="example@gmail.com"
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-
-                <FormControl sx={{ width: '27ch' }} variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                    <OutlinedInput
-                        id="outlined-adornment-password"
-                        value={password}
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="********"
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label={
-                                        showPassword ? 'hide the password' : 'display the password'
-                                    }
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    onMouseUp={handleMouseUpPassword}
-                                    edge="end"
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </FormControl>
-
-                {error && (
-                    <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                        {error}
-                    </Typography>
-                )}
-
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                    Don’t have an account?{" "}
-                    <Link
-                        component="button"
-                        variant="body2"
-                        onClick={() => navigate("/register")}
-                        sx={{ fontWeight: 600 }}
-                    >
-                        Register
-                    </Link>
-                </Typography>
-
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    sx={{ mt: 3, py: 1 }}
-                    disabled={loading}
-                >
-                    {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
-                </Button>
-            </Box>
-        </Paper>
-    );
+            <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                sx={{ mt: 3, py: 1 }}
+                disabled={loading}
+            >
+                {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            </Button>
+        </Box>
+    </Paper>
+);
 }
