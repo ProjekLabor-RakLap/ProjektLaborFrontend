@@ -15,6 +15,7 @@ import Grid from '@mui/material/Grid';
 import { PieChart, SparkLineChart } from '@mui/x-charts';
 import { Avatar, Card, CardActionArea, CardContent, CardMedia, Chip, Divider, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Typography } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import api from '../../api/api';
 
 function Statistics() {
   const [warehouses, setWarehouses] = React.useState<IWarehouse[]>([]);
@@ -48,8 +49,8 @@ function Statistics() {
     const fetchWarehouses = async () => {
       setLoadingWarehouses(true);
       try {
-        const response = await fetch('https://localhost:7116/api/warehouse');
-        const data = await response.json();
+        const response = await api.Warehouses.getWarehouses();
+        const data = await response.data;
         setWarehouses(data);
       } catch (error) {
         console.error('Error fetching warehouses:', error);
@@ -73,11 +74,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/product/warehouse/${selectedWarehouse}`
-        );
-        const data = await response.json();
-        setProducts(data);
+        const response = await api.Products.getProducts();
+        setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -93,10 +91,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/product/mostsold/${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.Products.mostSold(selectedWarehouse)
+        const data = await response.data;
         setMostsold(data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -113,10 +109,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingProducts(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/product/stuckproducts/${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.Products.stuckProducts(selectedWarehouse);
+        const data = await response.data;
         setStuckProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -137,10 +131,8 @@ function Statistics() {
       if (!selectedWarehouse) return;
       setLoadingWeeklyData(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stockchange/previous-week/${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.StockChanges.weeklyData(selectedWarehouse);
+        const data = await response.data;
         setWeeklyData(data);
       } catch (error) {
         console.error('Error fetching weekly data:', error);
@@ -158,10 +150,8 @@ function Statistics() {
       setLoadingStockChanges(true);
 
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stockchange/warehouse-product/${selectedProduct}-${selectedWarehouse}`
-        );
-        const data = await response.json();
+        const response = await api.StockChanges.warehouseProduct(selectedProduct, selectedWarehouse);
+        const data = await response.data;
         setStockChanges(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching stock changes:', error);
@@ -178,10 +168,8 @@ function Statistics() {
       if (!selectedWarehouse || !selectedProduct) return;
       setLoadingStock(true);
       try {
-        const response = await fetch(
-          `https://localhost:7116/api/stock/product/${selectedProduct}`
-        );
-        const data = await response.json();
+        const response = await api.Stocks.productStock(selectedProduct);
+        const data = await response.data;
         setStock(data);
       } catch (error) {
         console.error('Error fetching stock:', error);
