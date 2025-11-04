@@ -4,7 +4,7 @@ export interface IUserGet {
     lastName: string;
     email: string;
     password: string;
-    roleId: number;
+    role: string;
     isVerified: boolean;
     warehouseIds: number[];
 }

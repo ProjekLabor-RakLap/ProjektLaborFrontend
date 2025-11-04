@@ -17,10 +17,11 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { IUserLogin } from "../../Interfaces/IUser";
+import { useUserContext } from "../../Context/userContext";
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
 
     const [showPassword, setShowPassword] = React.useState(false);
 
@@ -39,6 +40,8 @@ export default function Login() {
 
     const navigate = useNavigate();
 
+    const { login } = useUserContext();
+
     const handleSubmit = (e: any) => {
         e.preventDefault();
         setError("");
@@ -51,25 +54,27 @@ export default function Login() {
         setLoading(true);
 
         setTimeout(async () => {
-            setLoading(false);
-
             if (!email || !password) {
                 setError("Please fill in both fields.");
+                setLoading(false);
                 return;
             }
 
             if (!email.includes('@') || !email.includes('.')) {
                 setError("Invalid email format!");
+                setLoading(false);
                 return;
             }
 
             try {
                 const response = await api.Users.login(loginData);
-                console.log(response.status);
+                login(response.data);
+                console.log("Successfull login!"); //REMOVE LATER
+                setLoading(false);
+                navigate("/");
             } catch (error) {
                 console.error("Error loging in:", error);
             }
-            
         }, 1500);
 };
 
@@ -78,7 +83,7 @@ return (
         elevation={6}
         sx={{
             p: 4,
-            width: 360,
+            width: '27ch',
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

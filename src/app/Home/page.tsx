@@ -3,9 +3,12 @@ import logo from '../../logo.svg';
 import '../../App.css';
 import PillNavFull from '../../Components/NavBar/PillNav/PillNavWithItems';
 import MagicBento from '../../Components/MagicBento/MagicBento';
+import { useUserContext } from '../../Context/userContext';
 
 
 function Home() {
+  const { user } = useUserContext();
+  console.log(user); //REMOVE LATER
   return (
     <div className="App">
       <header className="App-header">

@@ -18,14 +18,16 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
+import { IUserRegister } from "../../Interfaces/IUser";
 
 export default function Register() {
-    const [firsname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
-    const [role, setRole] = useState("");
-    const [email, setEmail] = useState("");
-    const [password1, setPassword1] = useState("");
-    const [password2, setPassword2] = useState("");
+    const [firsname, setFirstname] = useState<string>("");
+    const [lastname, setLastname] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password1, setPassword1] = useState<string>("");
+    const [password2, setPassword2] = useState<string>("");
+    const [role, setRole] = useState<number>(2);
 
     const [showPassword, setShowPassword] = React.useState(false);
 
@@ -39,8 +41,8 @@ export default function Register() {
         event.preventDefault();
     };
 
-    const handleRoleChange = (event: SelectChangeEvent) => {
-        setRole(event.target.value as string);
+    const handleRoleChange = (event: SelectChangeEvent<number>) => {
+        setRole(Number(event.target.value));
     };
 
     const [loading, setLoading] = useState(false);
@@ -52,60 +54,79 @@ export default function Register() {
         e.preventDefault();
         setError("");
 
+        const registerData: IUserRegister = {
+            firstName: firsname,
+            lastName: lastname,
+            email: email,
+            password: password1,
+            roleId: Number(role)
+        };
+
         setLoading(true);
 
-        setTimeout(() => {
-            setLoading(false);
-
+        setTimeout(async () => {
             if (!firsname || !lastname || !email || !password1 || !password2 || !role) {
                 setError("Please fill in all fields.");
+                setLoading(false);
                 return;
             }
 
             if (firsname.length > 75 || lastname.length > 75) {
                 setError("Firstname and Lastname cannot be more than 75 characters.");
+                setLoading(false);
                 return;
             }
 
             if (!email.includes('@') || !email.includes('.')) {
                 setError("Invalid email format!");
+                setLoading(false);
                 return;
             }
 
             if (password1 !== password2) {
                 setError("Passwords don't match.");
+                setLoading(false);
                 return;
             }
 
             if (password1.length < 8) {
                 setError("Password must be 8 or more characters.");
+                setLoading(false);
                 return;
             }
 
             if (!/[A-Z]/.test(password1)) {
                 setError("Password must contain at least one uppercase letter.");
+                setLoading(false);
                 return;
             }
 
             if (!/[a-z]/.test(password1)) {
                 setError("Password must contain at least one lowercase letter.");
+                setLoading(false);
                 return;
             }
 
             if (!/[0-9]/.test(password1)) {
                 setError("Password must contain at least one number.");
+                setLoading(false);
                 return;
             }
 
             if (!/[!@#$%^&*(),.?:{}|<>]/.test(password1)) {
                 setError("Password must contain at least one special character.");
+                setLoading(false);
                 return;
             }
 
-            if (email === "a@a.a" && password1 === "ASDasd1!") {
-                alert("✅ Login successful!");
-            } else {
-                setError("No");
+            try {
+                const response = await api.Users.registerUser(registerData);
+                console.log("Successfull register!"); //REMOVE LATER
+                console.log(response.data);
+                setLoading(false);
+                navigate("/");
+            } catch (error) {
+                console.error("Error on signup:", error);
             }
         }, 1500);
     };
@@ -115,7 +136,7 @@ export default function Register() {
             elevation={6}
             sx={{
                 p: 4,
-                width: 360,
+                width: '27ch',
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -129,7 +150,7 @@ export default function Register() {
             <Box display="flex"
                 flexDirection="column"
                 alignItems="center"
-                gap={2} 
+                gap={2}
                 component="form"
                 onSubmit={handleSubmit}
                 sx={{ width: "100%" }}>
@@ -145,7 +166,7 @@ export default function Register() {
                 />
 
                 <TextField
-                    sx={{ width: '27ch', m: 0  }}
+                    sx={{ width: '27ch', m: 0 }}
                     label="Lastname"
                     variant="outlined"
                     margin="normal"
@@ -155,7 +176,7 @@ export default function Register() {
                 />
 
                 <TextField
-                    sx={{ width: '27ch', m: 0  }}
+                    sx={{ width: '27ch', m: 0 }}
                     label="Email"
                     variant="outlined"
                     margin="normal"
@@ -164,7 +185,7 @@ export default function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <FormControl sx={{ width: '27ch', m: 0  }} variant="outlined">
+                <FormControl sx={{ width: '27ch', m: 0 }} variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-password1">Password</InputLabel>
                     <OutlinedInput
                         id="outlined-adornment-password1"
@@ -191,7 +212,7 @@ export default function Register() {
                     />
                 </FormControl>
 
-                <FormControl sx={{ width: '27ch', m: 0  }} variant="outlined">
+                <FormControl sx={{ width: '27ch', m: 0 }} variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-password2">Password again</InputLabel>
                     <OutlinedInput
                         id="outlined-adornment-password2"
@@ -218,7 +239,7 @@ export default function Register() {
                     />
                 </FormControl>
 
-                <FormControl sx={{ width: '27ch', m: 0  }}>
+                <FormControl sx={{ width: '27ch', m: 0 }}>
                     <InputLabel>Role</InputLabel>
                     <Select
                         id="role-select"
@@ -226,9 +247,9 @@ export default function Register() {
                         label="Role"
                         onChange={handleRoleChange}
                     >
-                        <MenuItem value={'Analyst'}>Analyst</MenuItem>
-                        <MenuItem value={'Manager'}>Manager</MenuItem>
-                        <MenuItem value={'Admin'}>Admin</MenuItem>
+                        <MenuItem value="2">Analyst</MenuItem>
+                        <MenuItem value="1">Manager</MenuItem>
+                        <MenuItem value="0">Admin</MenuItem>
                     </Select>
                 </FormControl>
 
@@ -258,7 +279,7 @@ export default function Register() {
                     sx={{ mt: 3, py: 1 }}
                     disabled={loading}
                 >
-                    {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+                    {loading ? <CircularProgress size={24} color="inherit" /> : "Register"}
                 </Button>
             </Box>
         </Paper>
