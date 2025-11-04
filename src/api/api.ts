@@ -42,7 +42,8 @@ const StockChanges = {
     createStockChange: (param: ICreateStockChange) => axiosInstance.post<ICreateStockChange>(`/api/stockchange`, param),
     updateStockChange:  (id: number, param2: IUpdateStockChange) => axiosInstance.patch<IUpdateStockChange>(`/api/stockchange/${id}`,param2),
     weeklyData: (warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/previous-week/${warehouseId}`),
-    warehouseProduct: (productId: number, warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse-product/${productId}-${warehouseId}`)
+    warehouseProduct: (productId: number, warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse-product/${productId}-${warehouseId}`),
+    warehouse: (warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse/${warehouseId}`)
 }
 const api = {Products, Warehouses, Stocks, StockChanges}
 

@@ -13,6 +13,7 @@ export function useWarehouseStatistics() {
   const [stuckProducts, setStuckProducts] = useState<IProduct[]>([]);
   const [productsSold, setProductsSold] = useState<{ [productName: string]: number }>();
   const [stockChanges, setStockChanges] = useState<IStockChange[]>([]);
+  const [stockChangesByWarehouse, setStockChangesByWarehouse] = useState<IStockChange[]>([]);
   const [weeklyData, setWeeklyData] = useState<IStockChange[]>([]);
   const [stock, setStock] = useState<IStock>();
   const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>();
@@ -21,6 +22,7 @@ export function useWarehouseStatistics() {
   const [loadingWarehouses, setLoadingWarehouses] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingStockChanges, setLoadingStockChanges] = useState(false);
+  const [loadingStockChangesByWarehouse, setLoadingStockChangesByWarehouse] = useState(false);
   const [loadingStock, setLoadingStock] = useState(false);
   const [loadingWeeklyData, setLoadingWeeklyData] = useState(false);
 
@@ -117,6 +119,22 @@ export function useWarehouseStatistics() {
       }
     };
     fetchWeeklyData();
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    if (!selectedWarehouse) return;
+    const fetchStockChangesByWarehouse = async () => {
+      setLoadingStockChangesByWarehouse(true);
+      try {
+        const response = await api.StockChanges.warehouse(selectedWarehouse);
+        setStockChangesByWarehouse(response.data);
+      } catch (error) {
+        console.error('Error fetching weekly data:', error);
+      } finally {
+        setLoadingStockChangesByWarehouse(false);
+      }
+    };
+    fetchStockChangesByWarehouse();
   }, [selectedWarehouse]);
 
   useEffect(() => {
@@ -227,5 +245,7 @@ export function useWarehouseStatistics() {
     dataset,
     layout,
     valueFormatter,
+    stockChangesByWarehouse,
+    loadingStockChangesByWarehouse
   };
 }

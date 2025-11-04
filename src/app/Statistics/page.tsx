@@ -21,6 +21,7 @@ function Statistics() {
     loadingStockChanges,
     loadingStock,
     loadingWeeklyData,
+    loadingStockChangesByWarehouse,
     chartData,
     weeklySalesData,
     dayLabels,
@@ -29,6 +30,7 @@ function Statistics() {
     layout,
     valueFormatter,
     stock,
+    stockChangesByWarehouse
   } = useWarehouseStatistics();
 
   const getWarehouseName = () => {
@@ -77,6 +79,8 @@ const getProductName = () => {
           layout={layout}
           valueFormatter={valueFormatter}
           stuckProducts={stuckProducts}
+          stockChangesByWarehouse={stockChangesByWarehouse}
+          loading={loadingStockChangesByWarehouse}
         />
 
         <StockOverview
