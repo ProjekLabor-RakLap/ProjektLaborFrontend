@@ -41,7 +41,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     const { login } = useUserContext();
-
+    
     const handleSubmit = (e: any) => {
         e.preventDefault();
         setError("");
@@ -72,8 +72,14 @@ export default function Login() {
                 console.log("Successfull login!"); //REMOVE LATER
                 setLoading(false);
                 navigate("/");
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Error loging in:", error);
+                if (error.response && error.response.data) {
+                    setError(error.response.data);
+                } else {
+                    setError("Error during login!");
+                }
+                setLoading(false);
             }
         }, 1500);
 };

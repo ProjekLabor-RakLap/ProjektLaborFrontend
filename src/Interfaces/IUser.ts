@@ -1,7 +1,7 @@
 export interface IUserGet {
     id: number;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
     password: string;
     role: string;
@@ -10,8 +10,8 @@ export interface IUserGet {
 }
 
 export interface IUserRegister {
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
     password: string;
     roleId: number;
@@ -23,8 +23,8 @@ export interface IUserLogin {
 }
 
 export interface IUserPatch {
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
     isVerified: boolean;
 }

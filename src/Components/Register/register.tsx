@@ -22,7 +22,7 @@ import api from "../../api/api";
 import { IUserRegister } from "../../Interfaces/IUser";
 
 export default function Register() {
-    const [firsname, setFirstname] = useState<string>("");
+    const [firstname, setFirstname] = useState<string>("");
     const [lastname, setLastname] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password1, setPassword1] = useState<string>("");
@@ -42,6 +42,7 @@ export default function Register() {
     };
 
     const handleRoleChange = (event: SelectChangeEvent<number>) => {
+        console.log(Number(event.target.value));
         setRole(Number(event.target.value));
     };
 
@@ -55,8 +56,8 @@ export default function Register() {
         setError("");
 
         const registerData: IUserRegister = {
-            firstName: firsname,
-            lastName: lastname,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: password1,
             roleId: Number(role)
@@ -65,13 +66,13 @@ export default function Register() {
         setLoading(true);
 
         setTimeout(async () => {
-            if (!firsname || !lastname || !email || !password1 || !password2 || !role) {
+            if (!firstname || !lastname || !email || !password1 || !password2) {
                 setError("Please fill in all fields.");
                 setLoading(false);
                 return;
             }
 
-            if (firsname.length > 75 || lastname.length > 75) {
+            if (firstname.length > 75 || lastname.length > 75) {
                 setError("Firstname and Lastname cannot be more than 75 characters.");
                 setLoading(false);
                 return;
@@ -125,8 +126,14 @@ export default function Register() {
                 console.log(response.data);
                 setLoading(false);
                 navigate("/");
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Error on signup:", error);
+                if (error.response && error.response.data) {
+                    setError(error.response.data);
+                } else {
+                    setError("Error during signup!");
+                }
+                setLoading(false);
             }
         }, 1500);
     };
@@ -160,7 +167,7 @@ export default function Register() {
                     label="Firstname"
                     variant="outlined"
                     margin="normal"
-                    value={firsname}
+                    value={firstname}
                     placeholder="Jane"
                     onChange={(e) => setFirstname(e.target.value)}
                 />

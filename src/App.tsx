@@ -21,7 +21,7 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/stock-change" element={<StockChange />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
