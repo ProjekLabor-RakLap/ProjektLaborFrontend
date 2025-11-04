@@ -60,13 +60,13 @@ const StockOverview: React.FC<StockOverviewProps> = ({
 
           <Grid>
             <CapacityPieChart
-              title="Store Capacity"
+              title="Warehouse Capacity"
               colors={["green", "blue"]}
               data={[
-                { id: 0, value: stock.stockInStore, label: "In Store" },
+                { id: 0, value: stock.stockInWarehouse, label: "In Warehouse" },
                 {
                   id: 1,
-                  value: stock.storeCapacity - stock.stockInStore,
+                  value: stock.warehouseCapacity - stock.stockInWarehouse,
                   label: "Free Space",
                 },
               ]}
