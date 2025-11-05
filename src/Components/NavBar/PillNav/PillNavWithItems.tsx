@@ -5,66 +5,45 @@ import logo from '../../../logo.png';
 import { useUserContext } from '../../../Context/userContext';
 
 function PillNavFull() {
-  const location = useLocation(); // <- ez adja az aktuális URL-t, pl. "/warehouse"
+  const location = useLocation();
   const navigate = useNavigate();
-
   const { user, logout } = useUserContext();
-   const handleLogout = () => {
+
+  const handleLogout = () => {
     logout();
-    navigate("/")
+    navigate('/');
   };
 
-  if (user === null) {
-    return (
-      <PillNav
-        logo={logo}
-        logoAlt="Company Logo"
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Warehouse', href: '/warehouse' },
-          { label: 'Stock Change', href: '/stock-change' },
-          { label: 'Products', href: '/products' },
-          { label: 'Statistics', href: '/statistics' },
-          { label: 'Admin', href: '/admin' },
-          { label: 'Profile', href: '/profile' },
-          { label: 'Login', href: '/login' }
-        ]}
-        activeHref={location.pathname} // <- dinamikusan az aktuális útvonal
-        className="custom-nav"
-        ease="power2.easeOut"
-        baseColor="#000000"
-        pillColor="#ffffff"
-        hoveredPillTextColor="#ffffff"
-        pillTextColor="#000000"
-      />
-    );
-  } else {
-    return (
-      <PillNav
-        logo={logo}
-        logoAlt="Company Logo"
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Warehouse', href: '/warehouse' },
-          { label: 'Stock Change', href: '/stock-change' },
-          { label: 'Products', href: '/products' },
-          { label: 'Statistics', href: '/statistics' },
-          { label: 'Admin', href: '/admin' },
-          { label: 'Profile', href: '/profile' },
-          {
-            label: 'Log out', onClick: handleLogout,
-          }
-        ]}
-        activeHref={location.pathname}
-        className="custom-nav"
-        ease="power2.easeOut"
-        baseColor="#000000"
-        pillColor="#ffffff"
-        hoveredPillTextColor="#ffffff"
-        pillTextColor="#000000"
-      />
-    );
-  }
+  const baseItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Warehouse', href: '/warehouse' },
+    { label: 'Stock Change', href: '/stock-change' },
+    { label: 'Products', href: '/products' },
+    { label: 'Statistics', href: '/statistics' },
+    { label: 'Admin', href: '/admin' },
+  ];
+
+  const userItems = user
+    ? [
+        { label: 'Profile', href: '/profile' },
+        { label: 'Log out', onClick: handleLogout },
+      ]
+    : [{ label: 'Login', href: '/login' }];
+
+  return (
+    <PillNav
+      logo={logo}
+      logoAlt="Company Logo"
+      items={[...baseItems, ...userItems]}
+      activeHref={location.pathname}
+      className="custom-nav"
+      ease="power2.easeOut"
+      baseColor="#000000"
+      pillColor="#ffffff"
+      hoveredPillTextColor="#ffffff"
+      pillTextColor="#000000"
+    />
+  );
 }
 
 export default PillNavFull;

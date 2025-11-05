@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
     Box,
     Button,
@@ -7,19 +7,16 @@ import {
     Paper,
     CircularProgress,
     FormControl,
-    IconButton,
-    InputAdornment,
-    OutlinedInput,
     InputLabel,
     Link,
     Select,
     MenuItem,
     SelectChangeEvent,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { IUserRegister } from "../../Interfaces/IUser";
+import PasswordInput from "../Inputs/passwordInput";
 
 export default function Register() {
     const [firstname, setFirstname] = useState<string>("");
@@ -29,20 +26,7 @@ export default function Register() {
     const [password2, setPassword2] = useState<string>("");
     const [role, setRole] = useState<number>(2);
 
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
-
-    const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
-
     const handleRoleChange = (event: SelectChangeEvent<number>) => {
-        console.log(Number(event.target.value));
         setRole(Number(event.target.value));
     };
 
@@ -121,13 +105,10 @@ export default function Register() {
             }
 
             try {
-                const response = await api.Users.registerUser(registerData);
-                console.log("Successfull register!"); //REMOVE LATER
-                console.log(response.data);
+                await api.Users.registerUser(registerData);
                 setLoading(false);
                 navigate("/");
             } catch (error: any) {
-                console.error("Error on signup:", error);
                 if (error.response && error.response.data) {
                     setError(error.response.data);
                 } else {
@@ -192,59 +173,16 @@ export default function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <FormControl sx={{ width: '27ch', m: 0 }} variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password1">Password</InputLabel>
-                    <OutlinedInput
-                        id="outlined-adornment-password1"
-                        value={password1}
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="********"
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label={
-                                        showPassword ? 'hide the password' : 'display the password'
-                                    }
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    onMouseUp={handleMouseUpPassword}
-                                    edge="end"
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password"
-                        onChange={(e) => setPassword1(e.target.value)}
-                    />
-                </FormControl>
+                <PasswordInput
+                    value={password1}
+                    onChange={(e) => setPassword1(e.target.value)}
+                />
 
-                <FormControl sx={{ width: '27ch', m: 0 }} variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password2">Password again</InputLabel>
-                    <OutlinedInput
-                        id="outlined-adornment-password2"
-                        value={password2}
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="********"
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label={
-                                        showPassword ? 'hide the password' : 'display the password'
-                                    }
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    onMouseUp={handleMouseUpPassword}
-                                    edge="end"
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password again"
-                        onChange={(e) => setPassword2(e.target.value)}
-                    />
-                </FormControl>
+                <PasswordInput
+                    value={password2}
+                    label="Password again"
+                    onChange={(e) => setPassword2(e.target.value)}
+                />
 
                 <FormControl sx={{ width: '27ch', m: 0 }}>
                     <InputLabel>Role</InputLabel>

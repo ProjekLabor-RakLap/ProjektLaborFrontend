@@ -23,10 +23,10 @@ export interface IUserLogin {
 }
 
 export interface IUserPatch {
-    firstname: string;
-    lastname: string;
-    email: string;
-    isVerified: boolean;
+    firstname?: string;
+    lastname?: string;
+    email?: string;
+    isVerified?: boolean;
 }
 
 export interface IUserForgotPwd {
@@ -36,8 +36,8 @@ export interface IUserForgotPwd {
 
 export interface IUserChangePwd {
     email: string;
-    oldpassword: string;
-    newpassword: string;
+    Password: string;
+    NewPassword: string;
 }
 
 export interface IUserAssignWarehouse {

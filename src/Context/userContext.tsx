@@ -3,7 +3,7 @@ import { IUserGet } from "../Interfaces/IUser";
 
 interface UserContextType {
   user: IUserGet | null;
-  login: (userData: IUserGet) => void;
+  setUser: (userData: IUserGet) => void;
   logout: () => void;
 }
 
@@ -16,7 +16,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => setUser(null);
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, setUser: login, logout }}>
       {children}
     </UserContext.Provider>
   );
