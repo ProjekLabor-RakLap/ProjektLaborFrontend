@@ -1,33 +1,27 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { IWarehouseCost, IProductStockChanges } from "../../Interfaces/IWarehouseCost";
-import { IStockChange } from "../../Interfaces/IStockChange";
+import { IWarehouseStorageCost, IProductStorageCost } from "../../Interfaces/IWarehouseStorageCost";
 
-interface WarehouseCostChartProps {
-  warehouseCostData: IWarehouseCost;
+interface WarehouseStorageCostChartProps {
+  storageCostData: IWarehouseStorageCost;
 }
 
-export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostChartProps) {
+export default function WarehouseStorageCostChart({ storageCostData }: WarehouseStorageCostChartProps) {
+    console.log("storageCostData:", storageCostData);
   const chartData = useMemo(() => {
-    if (!warehouseCostData?.productStockChanges?.length) return { xValues: [], series: [] };
+    if (!storageCostData?.storageCosts?.length) return { xValues: [], series: [] };
 
     const productCostMap = new Map<string, Map<number, number>>();
 
-    warehouseCostData.productStockChanges.forEach((item: IProductStockChanges) => {
-      if (!item?.stockChanges || !item?.stock) return;
-      const productName = item.product?.name ?? "Unknown Product";
-      const transportCost = item.stock.transportCost ?? 0;
-
+    storageCostData.storageCosts.forEach((productData: IProductStorageCost) => {
+      const productName = productData.product?.name ?? "Unknown Product";
       const dateMap = productCostMap.get(productName) ?? new Map<number, number>();
 
-      item.stockChanges.forEach((change: IStockChange) => {
-        if (change.quantity < 0) {
-          const date = new Date(change.changeDate);
-          const day = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-          const cost = Math.abs(change.quantity) * transportCost;
-          dateMap.set(day, (dateMap.get(day) || 0) + cost);
-        }
+      productData.dailyCosts.forEach((daily) => {
+        const date = new Date(daily.date);
+        const day = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+        dateMap.set(day, daily.cost);
       });
 
       productCostMap.set(productName, dateMap);
@@ -35,7 +29,7 @@ export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostC
 
     const allDates = Array.from(
       new Set(
-        Array.from(productCostMap.values()).flatMap((dateMap) => Array.from(dateMap.keys()))
+        Array.from(productCostMap.values()).flatMap((map) => Array.from(map.keys()))
       )
     ).sort((a, b) => a - b);
 
@@ -59,7 +53,7 @@ export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostC
     }));
 
     return { xValues: allDates, series };
-  }, [warehouseCostData]);
+  }, [storageCostData]);
 
   const { xValues, series } = chartData;
 
@@ -68,14 +62,14 @@ export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostC
       <Card
         sx={{
           bgcolor: "background.paper",
-          color: "white",
+          color: "black",
           borderRadius: 2,
           boxShadow: 4,
           p: 2,
           textAlign: "center",
         }}
       >
-        <Typography variant="h6">No transport cost data available</Typography>
+        <Typography variant="h6">No storage cost data available</Typography>
       </Card>
     );
   }
@@ -84,14 +78,14 @@ export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostC
     <Card
       sx={{
         bgcolor: "background.paper",
-        color: "white",
+        color: "black",
         borderRadius: 2,
         boxShadow: 4,
       }}
     >
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Transport Costs Over Time by Product
+          Storage Costs Over Time by Product
         </Typography>
 
         <Box sx={{ width: "100%", height: 400 }}>
@@ -114,7 +108,7 @@ export default function WarehouseCostChart({ warehouseCostData }: WarehouseCostC
             ]}
             yAxis={[
               {
-                label: "Transport Cost",
+                label: "Storage Cost",
                 tickLabelStyle: { fill: "#bbb" },
               },
             ]}

@@ -4,6 +4,8 @@ import MostSoldProductCard from "../Statistics/MostSoldProductCard";
 import ProductsSoldChartCard from "../Statistics/ProductsSoldChartCard";
 import UnpopularProductsCard from "../Statistics/UnpopularProductsCard";
 import WarehouseStockScatterChart from "../Statistics/StockChangesScatterCard";
+import WarehouseCostChart from "Components/Statistics/WarehouseCostChart";
+import WarehouseStorageCostChart from "Components/Statistics/WarehouseStorageCostChart";
 
 export default function WarehouseDashboard({
   selectedWarehouse,
@@ -30,6 +32,16 @@ export default function WarehouseDashboard({
         gap: "40px",
       }}
     >
+      <Chip
+        label="Warehouse Statistics"
+        color="primary"
+        sx={{
+          mb: 1,
+          fontWeight: "bold",
+          bgcolor: "primary",
+          color: "white",
+        }}
+      />
       <Box
         sx={{
           width: "100%",
@@ -109,6 +121,52 @@ export default function WarehouseDashboard({
             }}
           >
             <WarehouseStockScatterChart {...props} />
+          </Card>
+        </Box>
+        <Box sx={{ width: "100%" }}>
+          <Chip
+            label="Transport Costs"
+            color="primary"
+            sx={{
+              mb: 2,
+              fontWeight: "bold",
+              bgcolor: theme.palette.primary.main,
+              color: "white",
+            }}
+          />
+          <Card
+            sx={{
+              width: "100%",
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              boxShadow: 3,
+              p: 2,
+            }}
+          >
+            <WarehouseCostChart {...props}/>
+          </Card>
+        </Box>
+        <Box sx={{ width: "100%" }}>
+          <Chip
+            label="Storage Costs"
+            color="primary"
+            sx={{
+              mb: 2,
+              fontWeight: "bold",
+              bgcolor: theme.palette.primary.main,
+              color: "white",
+            }}
+          />
+          <Card
+            sx={{
+              width: "100%",
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              boxShadow: 3,
+              p: 2,
+            }}
+          >
+            <WarehouseStorageCostChart {...props}/>
           </Card>
         </Box>
       </Box>

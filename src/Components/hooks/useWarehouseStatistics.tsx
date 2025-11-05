@@ -1,10 +1,11 @@
-// src/hooks/useWarehouseStatistics.ts
 import { useState, useEffect, useMemo } from 'react';
 import { IWarehouse } from '../../Interfaces/IWarehouse';
 import { IProduct } from '../../Interfaces/IProduct';
 import { IStockChange } from '../../Interfaces/IStockChange';
 import { IStock } from '../../Interfaces/IStock';
 import api from '../../api/api';
+import { IWarehouseCost } from 'Interfaces/IWarehouseCost';
+import { IWarehouseStorageCost } from 'Interfaces/IWarehouseStorageCost';
 
 export function useWarehouseStatistics() {
   const [warehouses, setWarehouses] = useState<IWarehouse[]>([]);
@@ -18,6 +19,8 @@ export function useWarehouseStatistics() {
   const [stock, setStock] = useState<IStock>();
   const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>();
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+  const [WarehouseCost, setWarehouseCost] = useState<IWarehouseCost | null>();
+  const [storageCost, setStorageCost] = useState<IWarehouseStorageCost | null>(null);
 
   const [loadingWarehouses, setLoadingWarehouses] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -25,6 +28,8 @@ export function useWarehouseStatistics() {
   const [loadingStockChangesByWarehouse, setLoadingStockChangesByWarehouse] = useState(false);
   const [loadingStock, setLoadingStock] = useState(false);
   const [loadingWeeklyData, setLoadingWeeklyData] = useState(false);
+  const [loadingWarehouseCost, setLoadingWarehouseCost] = useState(false);
+  const [loadingStorageCost, setLoadingStorageCost] = useState(false);
 
   useEffect(() => {
     const fetchWarehouses = async () => {
@@ -87,6 +92,38 @@ export function useWarehouseStatistics() {
       }
     };
     fetchStuckProducts();
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    if (!selectedWarehouse) return;
+    const fetchWarehouseCost = async () => {
+      setLoadingWarehouseCost(true);
+      try {
+        const response = await api.Stocks.warehouseCost(selectedWarehouse);
+        setWarehouseCost(response.data);
+      } catch (error) {
+        console.error('Error fetching stuck products:', error);
+      } finally {
+        setLoadingWarehouseCost(false);
+      }
+    };
+    fetchWarehouseCost();
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    if (!selectedWarehouse) return;
+    const fetchStorageCost = async () => {
+      setLoadingStorageCost(true);
+      try {
+        const response = await api.Stocks.storageCost(selectedWarehouse);
+        setStorageCost(response.data);
+      } catch (error) {
+        console.error('Error fetching stuck products:', error);
+      } finally {
+        setLoadingStorageCost(false);
+      }
+    };
+    fetchStorageCost();
   }, [selectedWarehouse]);
 
   useEffect(() => {
@@ -246,6 +283,10 @@ export function useWarehouseStatistics() {
     layout,
     valueFormatter,
     stockChangesByWarehouse,
-    loadingStockChangesByWarehouse
+    loadingStockChangesByWarehouse,
+    WarehouseCost,
+    loadingWarehouseCost,
+    storageCost,
+    loadingStorageCost
   };
 }
