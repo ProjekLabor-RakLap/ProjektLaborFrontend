@@ -2,7 +2,9 @@ import { IProduct, ICreateProduct, IUpdateProduct } from "../Interfaces/IProduct
 import { IWarehouse, ICreateWarehouse, IUpdateWarehouse } from "../Interfaces/IWarehouse";
 import { IStock, ICreateStock, IUpdateStock } from "../Interfaces/IStock";
 import { IStockChange, ICreateStockChange, IUpdateStockChange } from "../Interfaces/IStockChange";
+import { IWarehouseCost } from "../Interfaces/IWarehouseCost";
 import axiosInstance from "./axois.config";
+import { IWarehouseStorageCost } from "Interfaces/IWarehouseStorageCost";
 
 const Products = {
     getProducts: () => axiosInstance.get<IProduct[]>(`/api/product`),
@@ -31,7 +33,9 @@ const Stocks = {
     deleteStock: (id: number) => axiosInstance.delete<void>(`/api/stock/${id}`),
     createStock: (param: ICreateStock) => axiosInstance.post<ICreateStock>(`/api/stock`, param),
     updateStock:  (id: number, param2: IUpdateStock) => axiosInstance.patch<IUpdateStock>(`/api/stock/${id}`,param2),
-    productStock: (productId: number) => axiosInstance.get<IStock>(`/api/stock/product/${productId}`)
+    productStock: (productId: number) => axiosInstance.get<IStock>(`/api/stock/product/${productId}`),
+    warehouseCost: (warehouseId: number) => axiosInstance.get<IWarehouseCost>(`/api/stock/warehousecost/${warehouseId}`),
+    storageCost: (warehouseId: number) => axiosInstance.get<IWarehouseStorageCost>(`/api/stock/storagecost/${warehouseId}`)
 }
 
 const StockChanges = {

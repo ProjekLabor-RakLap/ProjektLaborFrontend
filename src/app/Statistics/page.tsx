@@ -5,6 +5,7 @@ import WarehouseProductSelector from '../../Components/Selector/WarehouseProduct
 import WarehouseDashboard from '../../Components/Dashboard/WarehouseStatisticsDashboard';
 import StockOverview from '../../Components/Dashboard/ProductStatisticsDashboard';
 import { useWarehouseStatistics } from '../../Components/hooks/useWarehouseStatistics';
+import WarehouseCostChart from '../../Components/Statistics/WarehouseCostChart';
 
 function Statistics() {
   const {
@@ -30,7 +31,11 @@ function Statistics() {
     layout,
     valueFormatter,
     stock,
-    stockChangesByWarehouse
+    stockChangesByWarehouse,
+    WarehouseCost,
+    loadingWarehouseCost,
+    storageCost,
+    loadingStorageCost
   } = useWarehouseStatistics();
 
   const getWarehouseName = () => {
@@ -45,8 +50,7 @@ const getProductName = () => {
   return product ? product.name : '';
 };
 
-
-  return (
+return (
     <div className="App">
       <div className="App-header">
         <PillNavFull />
@@ -67,7 +71,7 @@ const getProductName = () => {
           getProductName={getProductName}
         />
 
-        <WarehouseDashboard
+                <WarehouseDashboard
           selectedWarehouse={selectedWarehouse}
           loadingWeeklyData={loadingWeeklyData}
           weeklySalesData={weeklySalesData}
@@ -81,6 +85,10 @@ const getProductName = () => {
           stuckProducts={stuckProducts}
           stockChangesByWarehouse={stockChangesByWarehouse}
           loading={loadingStockChangesByWarehouse}
+          warehouseCostData={WarehouseCost}
+          loadingWarehouseCost={loadingWarehouseCost}
+          storageCostData={storageCost}
+          loadingStorageCost={loadingStorageCost}
         />
 
         <StockOverview
@@ -92,7 +100,7 @@ const getProductName = () => {
         />
       </div>
     </div>
-  );
+      );
 }
 
 export default Statistics;

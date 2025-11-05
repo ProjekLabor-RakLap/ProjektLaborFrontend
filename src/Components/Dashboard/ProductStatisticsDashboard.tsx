@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import { Box, Chip, CircularProgress, Grid, Typography } from "@mui/material";
 import StockLineChart from "../Statistics/StockLineChart";
 import CapacityPieChart from "../Statistics/CapacityPieChart";
 
@@ -40,14 +40,47 @@ const StockOverview: React.FC<StockOverviewProps> = ({
   }
 
   return (
+    <>
+    <div style={{display: 'flex', justifyContent:'center', marginTop: '2em'}}>
+      <Chip
+        label="Product Statistics"
+        color="primary"
+        sx={{
+          mb: 1,
+          fontWeight: "bold",
+          bgcolor: "primary",
+          color: "white",
+        }}
+      />
+    </div>
     <Grid container spacing={3} justifyContent="center" alignItems="flex-start" sx={{ mt: 3 }}>
       <Grid>
+        <Chip
+        label="Stock Changes of the product"
+        color="primary"
+        sx={{
+          mb: 1,
+          fontWeight: "bold",
+          bgcolor: "primary",
+          color: "white",
+        }}
+      />
         <StockLineChart chartData={chartData} />
       </Grid>
 
       {stock && (
         <>
           <Grid>
+            <Chip
+              label="Store Capacity"
+              color="primary"
+              sx={{
+                mb: 1,
+                fontWeight: "bold",
+                bgcolor: "primary",
+                color: "white",
+              }}
+            />
             <CapacityPieChart
                 title="Store Capacity"
                 colors={["green", "blue"]}
@@ -59,14 +92,24 @@ const StockOverview: React.FC<StockOverviewProps> = ({
             </Grid>
 
           <Grid>
+              <Chip
+              label="Warehouse Capacity"
+              color="primary"
+              sx={{
+                mb: 1,
+                fontWeight: "bold",
+                bgcolor: "primary",
+                color: "white",
+              }}
+            />
             <CapacityPieChart
-              title="Store Capacity"
+              title="Warehouse Capacity"
               colors={["green", "blue"]}
               data={[
-                { id: 0, value: stock.stockInStore, label: "In Store" },
+                { id: 0, value: stock.stockInWarehouse, label: "In Warehouse" },
                 {
                   id: 1,
-                  value: stock.storeCapacity - stock.stockInStore,
+                  value: stock.warehouseCapacity - stock.stockInWarehouse,
                   label: "Free Space",
                 },
               ]}
@@ -75,6 +118,7 @@ const StockOverview: React.FC<StockOverviewProps> = ({
         </>
       )}
     </Grid>
+    </>
   );
 };
 
