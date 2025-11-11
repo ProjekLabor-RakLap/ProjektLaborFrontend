@@ -2,10 +2,10 @@ import { IProduct, ICreateProduct, IUpdateProduct } from "../Interfaces/IProduct
 import { IWarehouse, ICreateWarehouse, IUpdateWarehouse } from "../Interfaces/IWarehouse";
 import { IStock, ICreateStock, IUpdateStock } from "../Interfaces/IStock";
 import { IStockChange, ICreateStockChange, IUpdateStockChange } from "../Interfaces/IStockChange";
+import { IUserGet, IUserAssignWarehouse, IUserChangePwd, IUserForgotPwd, IUserLogin, IUserPatch, IUserRegister } from "../Interfaces/IUser";
 import { IWarehouseCost } from "../Interfaces/IWarehouseCost";
 import axiosInstance from "./axois.config";
 import { IWarehouseStorageCost } from "Interfaces/IWarehouseStorageCost";
-import { IAssignWarehouse, IUser } from "Interfaces/IUser";
 
 const Products = {
     getProducts: () => axiosInstance.get<IProduct[]>(`/api/product`),
@@ -52,11 +52,18 @@ const StockChanges = {
 }
 
 const Users = {
-    getUsers: () => axiosInstance.get<IUser[]>(`/api/user`),
-    userAssignWarehousePatch: (userId: number, warehouseId: number) => axiosInstance.patch<IAssignWarehouse>(`/api/user/assign-user-warehouse`, { userId, warehouseId }),
-    userAssignWarehouseDelete: (userId: number, warehouseId: number) => axiosInstance.delete<IAssignWarehouse>(`/api/user/assign-user-warehouse`, { data: { userId, warehouseId } })
+    getUsers: () => axiosInstance.get<IUserGet[]>(`/api/user`),
+    getUser: (id: number) => axiosInstance.get<IUserGet>(`/api/user/${id}`),
+    deleteUser: (id: number) => axiosInstance.delete<void>(`/api/user/${id}`),
+    registerUser: (param: IUserRegister) => axiosInstance.post<IUserGet>(`/api/user/register`, param),
+    login: (param: IUserLogin) => axiosInstance.post<IUserGet>(`/api/user/login`, param),
+    updateUser: (id: number, param: IUserPatch) => axiosInstance.patch<IUserGet>(`/api/user/update-profile/${id}`, param),
+    resetPassword: (param: IUserForgotPwd) => axiosInstance.patch<void>(`/api/user/reset-password`, param),
+    updatePassword: (param: IUserChangePwd) => axiosInstance.patch<void>(`/api/user/update-password`, param),
+    assignUserWarehouse: (param: IUserAssignWarehouse) => axiosInstance.patch<void>(`/api/user/assign-user-warehouse`, param),
+    unAssignUserWarehouse: (param: IUserAssignWarehouse) => axiosInstance.delete<void>(`/api/user/assign-user-warehouse`, {data: param}),
 }
 
-const api = {Products, Warehouses, Stocks, StockChanges, Users};
+const api = {Products, Warehouses, Stocks, StockChanges, Users}
 
 export default api;

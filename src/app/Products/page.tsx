@@ -28,7 +28,7 @@ function useWindowHeight() {
 }
 
 export default function Products() {
- const [products, setProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const height = useWindowHeight();
 
   useEffect(() => {
@@ -49,14 +49,14 @@ export default function Products() {
     );
   };
 
-  const handleDelete = (deletedId: number)  => {
+  const handleDelete = (deletedId: number) => {
     setProducts(prev => prev.filter(product => product.id !== deletedId));
   };
 
   const handleCreate = (created: IProduct) => {
     setProducts(prev => [...prev, created]);
   };
-  
+
   return (
     <div className="App">
       <header className="App-header">
@@ -80,15 +80,15 @@ export default function Products() {
             />
           )}
           deleteButton={(row) => (
-          <DeleteProductDialog
-            id={row.id}
-            text="Delete"
-            dialogTitle="Delete product"
-            dialogContent={`Are you sure you want to delete ${row.name} product?`}
-            acceptText="Delete"
-            cancelText="Cancel"
-            onUpdate={handleDelete}
-          />)}
+            <DeleteProductDialog
+              id={row.id}
+              text="Delete"
+              dialogTitle="Delete product"
+              dialogContent={`Are you sure you want to delete ${row.name} product?`}
+              acceptText="Delete"
+              cancelText="Cancel"
+              onUpdate={handleDelete}
+            />)}
           createButton={(
             <CreateProductDialogButton
               text="Create"
@@ -98,7 +98,7 @@ export default function Products() {
               cancelText="Cancel"
               onUpdate={handleCreate}
             />
-          )} 
+          )}
         />
       </header>
     </div>
