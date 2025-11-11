@@ -31,6 +31,7 @@ export interface IUserPatch {
 
 export interface IUserForgotPwd {
     email: string;
+    token: string;
     password: string;
 }
 

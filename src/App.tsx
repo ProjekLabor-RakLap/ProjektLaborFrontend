@@ -9,6 +9,7 @@ import StockChange from './app/StockChange/page';
 import Products from './app/Products/page';
 import LoginPage from './app/Login/page';
 import RegisterPage from './app/Register/page';
+import ForgottenPasswordPage from './app/ForgottenPassword/page';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/profile" element={<Profile/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
         </Routes>
       </Router>
     </UserProvider>

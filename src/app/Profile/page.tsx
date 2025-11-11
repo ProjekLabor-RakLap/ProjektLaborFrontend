@@ -15,7 +15,7 @@ export default function Profile() {
           flexDirection="column"
           alignItems="center"
           gap={2}
-          sx={{ width: "100%" }}>
+          sx={{ width: "100%", paddingTop: "5rem" }}>
 
           <DataUpdateComponent/>
 
