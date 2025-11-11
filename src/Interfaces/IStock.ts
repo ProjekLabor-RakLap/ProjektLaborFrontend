@@ -10,6 +10,8 @@ export interface IStock {
     product: IProduct;
     currency: string;
     price: number;
+    transportCost: number;
+    StorageCost: number;
     warehouse: IWarehouse;
 }
 
