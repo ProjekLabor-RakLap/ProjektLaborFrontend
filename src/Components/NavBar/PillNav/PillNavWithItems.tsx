@@ -1,25 +1,41 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PillNav from './PillNav';
 import logo from '../../../logo.png';
+import { useUserContext } from '../../../Context/userContext';
 
 function PillNavFull() {
-  const location = useLocation(); // <- ez adja az aktuális URL-t, pl. "/warehouse"
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useUserContext();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const baseItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Warehouse', href: '/warehouse' },
+    { label: 'Stock Change', href: '/stock-change' },
+    { label: 'Products', href: '/products' },
+    { label: 'Statistics', href: '/statistics' },
+    { label: 'Admin', href: '/admin' },
+  ];
+
+  const userItems = user
+    ? [
+        { label: 'Profile', href: '/profile' },
+        { label: 'Log out', onClick: handleLogout },
+      ]
+    : [{ label: 'Login', href: '/login' }];
 
   return (
     <PillNav
       logo={logo}
       logoAlt="Company Logo"
-      items={[
-        { label: 'Home', href: '/' },
-        { label: 'Warehouse', href: '/warehouse' },
-        { label: 'Stock Change', href: '/stock-change' },
-        { label: 'Products', href: '/products' },
-        { label: 'Statistics', href: '/statistics' },
-        { label: 'Admin', href: '/admin' },
-        { label: 'Profile', href: '/profile' }
-      ]}
-      activeHref={location.pathname} // <- dinamikusan az aktuális útvonal
+      items={[...baseItems, ...userItems]}
+      activeHref={location.pathname}
       className="custom-nav"
       ease="power2.easeOut"
       baseColor="#000000"

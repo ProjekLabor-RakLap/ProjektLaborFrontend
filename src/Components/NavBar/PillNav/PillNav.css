@@ -4,7 +4,7 @@
   z-index: 99;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pill-nav-container {
     width: 100%;
     left: 0;
@@ -22,7 +22,7 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pill-nav {
     width: 100%;
     justify-content: space-between;
@@ -81,6 +81,7 @@
   margin-top: 2.5px;
   background: var(--pill-bg, #fff);
   color: var(--pill-text, var(--base, #000));
+  font: inherit;                   
   text-decoration: none;
   border-radius: 9999px;
   box-sizing: border-box;
@@ -153,7 +154,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .desktop-only {
     display: none;
   }
@@ -179,7 +180,7 @@
   position: relative;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .mobile-menu-button {
     display: flex;
   }
@@ -217,20 +218,28 @@
   gap: 3px;
 }
 
-.mobile-menu-popover .mobile-menu-link {
+.mobile-menu-popover .mobile-menu-link,
+.mobile-menu-popover .mobile-menu-btn {
   display: block;
+  width: 100%;
   padding: 12px 16px;
-  color: var(--pill-text, #fff);
+  color: var(--pill-text, var(--base, #000));
   background-color: var(--pill-bg, #fff);
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
   border-radius: 50px;
   transition: all 0.2s ease;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .mobile-menu-popover .mobile-menu-link:hover {
   cursor: pointer;
-  background-color: var(--base);
+  background-color: var(--base, #000);
   color: var(--hover-text, #fff);
 }
