@@ -5,6 +5,7 @@ import { IStockChange, ICreateStockChange, IUpdateStockChange } from "../Interfa
 import { IWarehouseCost } from "../Interfaces/IWarehouseCost";
 import axiosInstance from "./axois.config";
 import { IWarehouseStorageCost } from "Interfaces/IWarehouseStorageCost";
+import { IAssignWarehouse, IUser } from "Interfaces/IUser";
 
 const Products = {
     getProducts: () => axiosInstance.get<IProduct[]>(`/api/product`),
@@ -49,6 +50,13 @@ const StockChanges = {
     warehouseProduct: (productId: number, warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse-product/${productId}-${warehouseId}`),
     warehouse: (warehouseId: number) => axiosInstance.get<IStockChange[]>(`/api/stockchange/warehouse/${warehouseId}`)
 }
-const api = {Products, Warehouses, Stocks, StockChanges}
+
+const Users = {
+    getUsers: () => axiosInstance.get<IUser[]>(`/api/user`),
+    userAssignWarehousePatch: (userId: number, warehouseId: number) => axiosInstance.patch<IAssignWarehouse>(`/api/user/assign-user-warehouse`, { userId, warehouseId }),
+    userAssignWarehouseDelete: (userId: number, warehouseId: number) => axiosInstance.delete<IAssignWarehouse>(`/api/user/assign-user-warehouse`, { data: { userId, warehouseId } })
+}
+
+const api = {Products, Warehouses, Stocks, StockChanges, Users};
 
 export default api;
