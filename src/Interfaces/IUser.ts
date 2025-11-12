@@ -43,5 +43,5 @@ export interface IUserChangePwd {
 
 export interface IUserAssignWarehouse {
     userId: number;
-    warehuseId: number;
+    warehouseId: number;
 }
