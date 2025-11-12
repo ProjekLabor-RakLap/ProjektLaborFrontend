@@ -10,6 +10,7 @@ import Products from './app/Products/page';
 import LoginPage from './app/Login/page';
 import RegisterPage from './app/Register/page';
 import ForgottenPasswordPage from './app/ForgottenPassword/page';
+import VerifyPage from 'app/Verify/page';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
+          <Route path="/verify" element={<VerifyPage />} />
         </Routes>
       </Router>
     </UserProvider>
