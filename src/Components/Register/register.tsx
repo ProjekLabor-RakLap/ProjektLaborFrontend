@@ -129,6 +129,7 @@ export default function Register() {
                 flexDirection: "column",
                 alignItems: "center",
                 borderRadius: 3,
+                marginTop: "5rem"
             }}
         >
             <Typography variant="h5" sx={{ mb: 2 }}>
