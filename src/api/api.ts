@@ -6,6 +6,7 @@ import { IUserGet, IUserAssignWarehouse, IUserChangePwd, IUserForgotPwd, IUserLo
 import { IWarehouseCost } from "../Interfaces/IWarehouseCost";
 import axiosInstance from "./axois.config";
 import { IWarehouseStorageCost } from "Interfaces/IWarehouseStorageCost";
+import { send } from "process";
 
 const Products = {
     getProducts: () => axiosInstance.get<IProduct[]>(`/api/product`),
@@ -62,6 +63,8 @@ const Users = {
     updatePassword: (param: IUserChangePwd) => axiosInstance.patch<void>(`/api/user/update-password`, param),
     assignUserWarehouse: (param: IUserAssignWarehouse) => axiosInstance.patch<void>(`/api/user/assign-user-warehouse`, param),
     unAssignUserWarehouse: (param: IUserAssignWarehouse) => axiosInstance.delete<void>(`/api/user/assign-user-warehouse`, {data: param}),
+    sendVerificationCode: (email: string) => axiosInstance.post<void>(`/api/user/send-verification-code`, {email}),
+    verifyAccount: (email: string, verificationCode: string) => axiosInstance.post<void>(`/api/user/verify-email`, {email, verificationCode}),
 }
 
 const api = {Products, Warehouses, Stocks, StockChanges, Users}
