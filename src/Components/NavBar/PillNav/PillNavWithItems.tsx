@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PillNav from './PillNav';
 import logo from '../../../logo.png';
@@ -14,14 +14,40 @@ function PillNavFull() {
     navigate('/');
   };
 
-  const baseItems = [
+  let baseItems = [
     { label: 'Home', href: '/' },
-    { label: 'Warehouse', href: '/warehouse' },
-    { label: 'Stock Change', href: '/stock-change' },
-    { label: 'Products', href: '/products' },
-    { label: 'Statistics', href: '/statistics' },
-    { label: 'Admin', href: '/admin' },
   ];
+
+  if (user?.role == "Admin") {
+    baseItems = [
+      ...baseItems,
+      { label: 'Warehouse', href: '/warehouse' },
+      { label: 'Stock Change', href: '/stock-change' },
+      { label: 'Products', href: '/products' },
+      { label: 'Statistics', href: '/statistics' },
+      { label: 'Admin', href: '/admin' },
+    ];
+  }
+
+  if (user?.role == "Manager") {
+    baseItems = [
+      ...baseItems,
+      { label: 'Warehouse', href: '/warehouse' },
+      { label: 'Stock Change', href: '/stock-change' },
+      { label: 'Products', href: '/products' },
+      { label: 'Statistics', href: '/statistics' },
+    ];
+  }
+
+  if (user?.role == "Analyst") {
+    baseItems = [
+      ...baseItems,
+      { label: 'Warehouse', href: '/warehouse' },
+      { label: 'Stock Change', href: '/stock-change' },
+      { label: 'Products', href: '/products' },
+      { label: 'Statistics', href: '/statistics' },
+    ];
+  }
 
   const userItems = user
     ? [
