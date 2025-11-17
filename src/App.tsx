@@ -11,6 +11,7 @@ import LoginPage from './app/Login/page';
 import RegisterPage from './app/Register/page';
 import ForgottenPasswordPage from './app/ForgottenPassword/page';
 import VerifyPage from 'app/Verify/page';
+import Excel from 'app/Excel/page';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
           <Route path="/verify" element={<VerifyPage />} />
+          <Route path="/excel" element={<Excel />} />
         </Routes>
       </Router>
     </UserProvider>

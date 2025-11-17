@@ -26,6 +26,7 @@ function PillNavFull() {
       { label: 'Products', href: '/products' },
       { label: 'Statistics', href: '/statistics' },
       { label: 'Admin', href: '/admin' },
+      { label: 'Excel', href: '/excel' },
     ];
   }
 
@@ -36,6 +37,7 @@ function PillNavFull() {
       { label: 'Stock Change', href: '/stock-change' },
       { label: 'Products', href: '/products' },
       { label: 'Statistics', href: '/statistics' },
+      { label: 'Excel', href: '/excel' },
     ];
   }
 
