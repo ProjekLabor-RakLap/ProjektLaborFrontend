@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { IWarehouse } from '../../Interfaces/IWarehouse';
 import { IProduct } from '../../Interfaces/IProduct';
 import { IStockChange } from '../../Interfaces/IStockChange';
@@ -6,6 +6,7 @@ import { IStock } from '../../Interfaces/IStock';
 import api from '../../api/api';
 import { IWarehouseCost } from 'Interfaces/IWarehouseCost';
 import { IWarehouseStorageCost } from 'Interfaces/IWarehouseStorageCost';
+import axiosInstance from 'api/axois.config';
 
 export function useWarehouseStatistics() {
   const [warehouses, setWarehouses] = useState<IWarehouse[]>([]);
@@ -30,6 +31,38 @@ export function useWarehouseStatistics() {
   const [loadingWeeklyData, setLoadingWeeklyData] = useState(false);
   const [loadingWarehouseCost, setLoadingWarehouseCost] = useState(false);
   const [loadingStorageCost, setLoadingStorageCost] = useState(false);
+  const [movingAverage, setMovingAverage] = useState<number | null>(null);
+  const [loadingMovingAverage, setLoadingMovingAverage] = useState(false);
+  const [movingAverageError, setMovingAverageError] = useState<string | null>(null);
+
+   const fetchMovingAverage = useCallback(
+    async (window: number = 3) => {
+      if (!selectedProduct || !selectedWarehouse) return;
+
+      setLoadingMovingAverage(true);
+      setMovingAverageError(null);
+
+      try {
+        const response = await axiosInstance.get<string>(
+          `/api/stockchange/calculate-moving-average/${selectedProduct}?warehouseId=${selectedWarehouse}&window=${window}`
+        );
+        const match = response.data.match(/: ([\d.]+)/);
+        if (match) {
+          setMovingAverage(parseFloat(match[1]));
+        } else {
+          setMovingAverage(null);
+          setMovingAverageError('Unexpected server response');
+        }
+      } catch (err) {
+        setMovingAverageError('Failed to fetch moving average');
+        setMovingAverage(null);
+        console.error(err);
+      } finally {
+        setLoadingMovingAverage(false);
+      }
+    },
+    [selectedProduct, selectedWarehouse]
+  );
 
   useEffect(() => {
     const fetchWarehouses = async () => {
@@ -287,6 +320,10 @@ export function useWarehouseStatistics() {
     WarehouseCost,
     loadingWarehouseCost,
     storageCost,
-    loadingStorageCost
+    loadingStorageCost,
+    movingAverage,
+    fetchMovingAverage,
+    loadingMovingAverage,
+    movingAverageError
   };
 }
