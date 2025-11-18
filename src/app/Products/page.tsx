@@ -55,7 +55,7 @@ export default function Products() {
     );
   };
 
-  const handleDelete = (deletedId: number)  => {
+  const handleDelete = (deletedId: number) => {
     setProducts(prev => prev.filter(product => product.id !== deletedId));
   };
 

@@ -83,11 +83,8 @@ export default function CreateWarehouseDialog<T>({
     location: formData.get("location") as string,
   };
 
-  const success = await createWarehouse(newWarehouse);
-
-  // if (success) {
-  //   window.location.reload();
-  // }
+  await createWarehouse(newWarehouse);
+  handleClose();
 };
 
   return (

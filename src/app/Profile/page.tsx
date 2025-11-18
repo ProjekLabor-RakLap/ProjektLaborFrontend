@@ -1,17 +1,30 @@
+import { Box } from '@mui/material';
 import '../../App.css';
 import PillNavFull from '../../Components/NavBar/PillNav/PillNavWithItems';
+import DataUpdateComponent from '../../Components/Profile/dataUpdateComponent';
+import PasswordChangeComponent from '../../Components/Profile/passwordChangeComponent';
+import DeactivateProfileComponent from '../../Components/Profile/deactivateProfileComponent';
 
-
-function Profile() {
+export default function Profile() {
   return (
     <div className="App">
-      <header className="App-header">
-        <PillNavFull/>
-        PROFÁJL
+      <div className="App-header">
+        <PillNavFull />
 
-      </header>
+        <Box display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+          sx={{ width: "100%", paddingTop: "5rem" }}>
+
+          <DataUpdateComponent/>
+
+          <PasswordChangeComponent/>
+
+          <DeactivateProfileComponent/>
+
+        </Box>
+      </div>
     </div>
   );
 }
-
-export default Profile;
