@@ -17,6 +17,7 @@ interface FormDialogProps {
   acceptText: string;
   cancelText: string;
   onUpdate?: (updated: number) => void;
+  onNotify: (message: string, severity: 'success' | 'error') => void;
 }
 
 export default function DeleteWarehouseDialog({
@@ -26,7 +27,8 @@ export default function DeleteWarehouseDialog({
   dialogContent,
   acceptText,
   cancelText,
-  onUpdate
+  onUpdate,
+  onNotify,
 }: FormDialogProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -36,11 +38,16 @@ export default function DeleteWarehouseDialog({
   const deleteWarehouse = async (id: number) => {
     try {
       await api.Warehouses.deleteWarehouse(id);
-
+      onNotify('Warehouse deleted successfully!', 'success');
       onUpdate?.(id);
       console.log("Warehouse deleted successfully!");
     } catch (error: any) {
       console.error("Error deleting warehouse:", error.message || error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'An unknown error occurred while deleting the product.';
+      onNotify(errorMessage, 'error');
     }
   };
 

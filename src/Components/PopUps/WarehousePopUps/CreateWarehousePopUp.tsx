@@ -11,7 +11,6 @@ import BlockIcon from '@mui/icons-material/Block';
 import '../PopUpCSS.css';
 import { IWarehouse, ICreateWarehouse } from '../../../Interfaces/IWarehouse';
 import api from '../../../api/api';
-import { create } from 'domain';
 
 interface FormDialogProps<T> {
   text: string;
@@ -45,9 +44,9 @@ export default function CreateWarehouseDialog<T>({
       setAlertSeverity("success");
       setAlertMessage("Warehouse created successfully!");
 
-      //const createdWarehouse = response.data;
-      const createdWarehouse = newWarehouse as IWarehouse;
-      createdWarehouse.id = Math.floor(Math.random() * 1000000)
+      const createdWarehouse: IWarehouse = response.data;
+      // const createdWarehouse = newWarehouse as IWarehouse;
+      // createdWarehouse.id = Math.floor(Math.random() * 1000000)
       onUpdate?.(createdWarehouse);
       return true;
     }

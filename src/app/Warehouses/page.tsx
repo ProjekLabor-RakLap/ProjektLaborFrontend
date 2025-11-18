@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import * as React from 'react';
 import api from '../../api/api';
 import PillNavFull from '../../Components/NavBar/PillNav/PillNavWithItems';
 import { IWarehouse } from '../../Interfaces/IWarehouse';
@@ -8,6 +9,10 @@ import DeleteWarehouseDialog from '../../Components/PopUps/WarehousePopUps/Delet
 import CreateWarehouseDialog from '../../Components/PopUps/WarehousePopUps/CreateWarehousePopUp';
 import DefaultCard from '../../Components/Cards/Card';
 import { Grid } from '@mui/material';
+import SimpleSnackbar from '../../Components/Snackbar/Snackbar';
+import SelectWarehouse from '../../Components/Inputs/Select/SelectWarehouse';
+import { log } from 'node:console';
+
 
 const warehouseColumns: ColumnData<IWarehouse>[] = [
   { dataKey: 'id', label: 'id', width: 50 },
@@ -30,7 +35,9 @@ function useWindowHeight() {
 export default function Warehouses() {
   const [warehouses, setWarehouses] = useState<IWarehouse[]>([]);
   const height = useWindowHeight();
+  const [selectedWarehouseId, setSelectedWarehouseId] = React.useState<number>(0);
 
+ 
  useEffect(() => {
   const fetchWarehouses = async () => {
     try {
@@ -49,18 +56,45 @@ export default function Warehouses() {
     );
   };
   const handleDelete = (deletedId: number)  => {
-      setWarehouses(prev => prev.filter(warehouse => warehouse.id !== deletedId));
-    };
+    setWarehouses(prev => prev.filter(warehouse => warehouse.id !== deletedId));
+  };
+
+  const handleCreate = (created: IWarehouse) => {
+    setWarehouses(prev => [...prev, created]);
+  };
+
+  const handleWarehouseChange = (id: number) => {
+    setSelectedWarehouseId(id);
+    console.log("Selected warehouse ID:", id);
+  };
+    
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error',
+  });
   
-    const handleCreate = (created: IWarehouse) => {
-      setWarehouses(prev => [...prev, created]);
-    };
+  const handleNotify = (message: string, severity: 'success' | 'error') => {
+    setSnackbarState({ open: true, message, severity });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarState((prev) => ({ ...prev, open: false }));
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <PillNavFull />
-         <VirtuosoTable
+        <>
+          <PillNavFull />
+        </>
+        <></>
+        <SelectWarehouse
+          warehouses={warehouses}
+          onWarehouseChange={handleWarehouseChange}
+        />
+
+        <VirtuosoTable
           data={warehouses}
           columns={warehouseColumns}
           height={height * 0.85}
@@ -86,6 +120,7 @@ export default function Warehouses() {
             acceptText="Delete"
             cancelText="Cancel"
             onUpdate={handleDelete}
+            onNotify={handleNotify}
           />)}
           createButton={(
             <CreateWarehouseDialog
@@ -98,7 +133,12 @@ export default function Warehouses() {
             />
           )} 
         /> 
-        
+        <SimpleSnackbar
+          open={snackbarState.open}
+          message={snackbarState.message}
+          severity={snackbarState.severity}
+          onClose={handleSnackbarClose}
+        />
       </header>
     </div>
   );

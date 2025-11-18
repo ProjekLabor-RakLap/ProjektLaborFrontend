@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const baseURL ="https://localhost:7116" //process.env.REACT_APP_API_URL || `https://${window.location.hostname}:7116`;
+const baseURL = "https://localhost:7116"; //`https//${window.location.hostname}:7116` process.env.REACT_APP_API_URL ||
 
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -14,7 +14,6 @@ axiosInstance.interceptors.response.use(
   response => response,
   error => {
     console.error("API error:", error);
-    // Itt pl. kezelheted a 401-et, token refresh stb.
     return Promise.reject(error);
   }
 );

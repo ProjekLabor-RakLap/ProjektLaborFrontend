@@ -17,7 +17,8 @@ function PillNavFull() {
         { label: 'Products', href: '/products' },
         { label: 'Statistics', href: '/statistics' },
         { label: 'Admin', href: '/admin' },
-        { label: 'Profile', href: '/profile' }
+        { label: 'Profile', href: '/profile' },
+        { label: 'Stock', href: '/stock' }
       ]}
       activeHref={location.pathname} // <- dinamikusan az aktuális útvonal
       className="custom-nav"

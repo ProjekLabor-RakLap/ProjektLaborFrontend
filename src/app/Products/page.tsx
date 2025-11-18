@@ -6,6 +6,9 @@ import { CreateProductDialogButton } from '../../Components/PopUps/ProductPopUps
 import UpdateProductDialog from '../../Components/PopUps/ProductPopUps/UpdateProductPopUp';
 import DeleteProductDialog from '../../Components/PopUps/ProductPopUps/DeleteProductPopUp';
 import api from '../../api/api';
+import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
+import SimpleSnackbar from '../../Components/Snackbar/Snackbar';
 
 const productColumns: ColumnData<IProduct>[] = [
   { dataKey: 'id', label: 'id', width: 50 },
@@ -28,17 +31,20 @@ function useWindowHeight() {
 }
 
 export default function Products() {
- const [products, setProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
   const height = useWindowHeight();
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
         const response = await api.Products.getProducts();
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
+      setLoading(false);
     };
     fetchProducts();
   }, []);
@@ -57,10 +63,51 @@ export default function Products() {
     setProducts(prev => [...prev, created]);
   };
   
+
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error',
+  });
+  
+  // 2. Create the handler to show the snackbar
+  const handleNotify = (message: string, severity: 'success' | 'error') => {
+    setSnackbarState({ open: true, message, severity });
+  };
+
+  // 3. Create the handler to close the snackbar
+  const handleSnackbarClose = () => {
+    setSnackbarState((prev) => ({ ...prev, open: false }));
+  };
+
+
   return (
     <div className="App">
       <header className="App-header">
         <PillNavFull />
+        {loading ? 
+        <Box sx={{ width: '100%' }}>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation="pulse" />
+          <Skeleton animation={false} />
+          <br/>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation="pulse" />
+          <Skeleton animation={false} />
+          <br/>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation="pulse" />
+          <Skeleton animation={false} />
+          <br/>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation="pulse" />
+          <Skeleton animation={false} />
+          
+        </Box> :
         <VirtuosoTable
           data={products}
           columns={productColumns}
@@ -88,6 +135,7 @@ export default function Products() {
             acceptText="Delete"
             cancelText="Cancel"
             onUpdate={handleDelete}
+            onNotify={handleNotify}
           />)}
           createButton={(
             <CreateProductDialogButton
@@ -99,6 +147,12 @@ export default function Products() {
               onUpdate={handleCreate}
             />
           )} 
+        />}
+        <SimpleSnackbar
+          open={snackbarState.open}
+          message={snackbarState.message}
+          severity={snackbarState.severity}
+          onClose={handleSnackbarClose}
         />
       </header>
     </div>

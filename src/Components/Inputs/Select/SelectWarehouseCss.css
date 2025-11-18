@@ -1,0 +1,12 @@
+.selectWarehouse {
+    margin-top:3%;
+    background-color: white;
+    margin-bottom: 0.5%;
+    width: 15rem;
+}
+
+.menuItem {
+    font-size: 1.2rem;
+    background-color: white;
+    color: black;
+}

@@ -37,7 +37,7 @@ export default function VirtuosoTable<T extends { id: number }>({
     Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
       <TableContainer component={Paper} {...props} ref={ref} />
     )),
-    Table: (props) => <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />,
+    Table: (props) => <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'auto' }} />,
     TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
       <TableHead {...props} ref={ref} />
     )),

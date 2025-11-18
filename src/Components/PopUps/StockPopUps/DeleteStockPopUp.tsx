@@ -6,22 +6,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import '../PopUpCSS.css';
-import api from '../../../api/api';
-// We no longer need SimpleSnackbar here
+import { IWarehouse } from '../../../Interfaces/IWarehouse';
+import api from '../../../api/api'
 
-interface FormDialogProps<T> {
+interface FormDialogProps {
   id: number;
   text: string;
   dialogTitle: string;
   dialogContent: string;
   acceptText: string;
   cancelText: string;
-  onUpdate?: (updated: T) => void;
-  // ADD THIS PROP:
+  onUpdate?: (updated: number) => void;
   onNotify: (message: string, severity: 'success' | 'error') => void;
 }
 
-export default function DeleteProductDialog<T>({
+export default function DeleteStockDialog({
   id,
   text,
   dialogTitle,
@@ -29,47 +28,37 @@ export default function DeleteProductDialog<T>({
   acceptText,
   cancelText,
   onUpdate,
-  onNotify, // Get the new prop
-}: FormDialogProps<T>) {
+  onNotify,
+}: FormDialogProps) {
   const [open, setOpen] = React.useState(false);
-
-  // All snackbar and alert states are removed from this component
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleDelete = async () => {
+  const deleteWarehouse = async (id: number) => {
     try {
-      await api.Products.deleteProduct(id);
-
-      // 1. Tell the parent to show a success message
-      onNotify('Product deleted successfully!', 'success');
-      
-      // 2. Tell the parent to update the list
-      onUpdate?.(id as any);
-      
+      await api.Stocks.deleteStock(id);
+      onNotify('Stock deleted successfully!', 'success');
+      onUpdate?.(id);
+      console.log("Stock deleted successfully!");
     } catch (error: any) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting stock:", error.message || error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
         'An unknown error occurred while deleting the product.';
-      
-      // 1. Tell the parent to show an error message
       onNotify(errorMessage, 'error');
-    } finally {
-      // 3. Just close the dialog
-      setOpen(false);
     }
+  };
+
+  const handleDelete = async () => {
+    await deleteWarehouse(id);
+    handleClose();
   };
 
   return (
     <>
-      <Button
-        variant="outlined"
-        onClick={handleClickOpen}
-        className="deleteButton"
-      >
+      <Button variant="outlined" onClick={handleClickOpen} className="deleteButton">
         {text}
       </Button>
       <Dialog open={open} onClose={handleClose}>
@@ -86,7 +75,6 @@ export default function DeleteProductDialog<T>({
           </Button>
         </DialogActions>
       </Dialog>
-      {/* The Snackbar is no longer rendered here */}
     </>
   );
 }
