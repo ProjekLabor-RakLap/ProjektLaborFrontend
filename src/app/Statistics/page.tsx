@@ -35,7 +35,11 @@ function Statistics() {
     WarehouseCost,
     loadingWarehouseCost,
     storageCost,
-    loadingStorageCost
+    loadingStorageCost,
+    movingAverage,
+    fetchMovingAverage,
+    loadingMovingAverage,
+    movingAverageError
   } = useWarehouseStatistics();
 
   const getWarehouseName = () => {
@@ -97,6 +101,11 @@ return (
           loadingStock={loadingStock}
           chartData={chartData}
           stock={stock}
+          selectedWarehouse={selectedWarehouse}
+          movingAverage={movingAverage}
+          fetchMovingAverage={fetchMovingAverage}
+          loadingMovingAverage={loadingMovingAverage}
+          movingAverageError={movingAverageError}
         />
       </div>
     </div>
