@@ -7,6 +7,7 @@ import Statistics from './app/Statistics/page';
 import Profile from './app/Profile/page';
 import StockChange from './app/StockChange/page';
 import Products from './app/Products/page';
+import Stock from './app/Stock/page';
 import LoginPage from './app/Login/page';
 import RegisterPage from './app/Register/page';
 import ForgottenPasswordPage from './app/ForgottenPassword/page';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/stock-change" element={<StockChange />} />
+          <Route path="/stock" element={<Stock />} />
           <Route path="/profile" element={<Profile/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

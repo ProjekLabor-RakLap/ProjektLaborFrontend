@@ -80,9 +80,9 @@ export default function CreateProductDialog<T>({
           image: base64Image
         }
     const success = await createProduct(newProduct);
-    if (success) {
-      setTimeout(() => window.location.reload(), 1000);
-    }
+    // if (success) {
+    //   setTimeout(() => window.location.reload(), 1000);
+    // }
   };
 
   return (

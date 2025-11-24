@@ -166,9 +166,9 @@ export default function Stock() {
         <SelectWarehouse
           warehouses={warehouses}
           onWarehouseChange={handleWarehouseChange}
-        />
+          />
 
-        {warehouses.length > 0 && products.length > 0 && (
+          {warehouses.length > 0 && products.length > 0 && (
           <VirtuosoTable
             data={stocks}
             columns={stockColoums}

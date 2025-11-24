@@ -89,10 +89,6 @@ export default function Warehouses() {
           <PillNavFull />
         </>
         <></>
-        <SelectWarehouse
-          warehouses={warehouses}
-          onWarehouseChange={handleWarehouseChange}
-        />
 
         <VirtuosoTable
           data={warehouses}
