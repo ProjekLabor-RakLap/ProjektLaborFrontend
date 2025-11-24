@@ -135,7 +135,7 @@ export default function Stock() {
       storageCost: created.storageCost,
       whenToNotify: created.whenToNotify,
       whenToWarn: created.whenToWarn,
-    };
+    }; 
     setStocks(prev => [...prev, newCreated]);
   };
 

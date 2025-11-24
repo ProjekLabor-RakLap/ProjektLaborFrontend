@@ -7,7 +7,7 @@ import Statistics from './app/Statistics/page';
 import Profile from './app/Profile/page';
 import StockChange from './app/StockChange/page';
 import Products from './app/Products/page';
-import Stock from './app/Stock/page';
+import Stock from './app/Stock/pageaa';
 import LoginPage from './app/Login/page';
 import RegisterPage from './app/Register/page';
 import ForgottenPasswordPage from './app/ForgottenPassword/page';
