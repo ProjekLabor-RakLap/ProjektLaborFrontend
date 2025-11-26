@@ -65,6 +65,7 @@ const Users = {
     unAssignUserWarehouse: (param: IUserAssignWarehouse) => axiosInstance.delete<void>(`/api/user/assign-user-warehouse`, {data: param}),
     sendVerificationCode: (email: string) => axiosInstance.post<void>(`/api/user/send-verification-code`, {email}),
     verifyAccount: (email: string, verificationCode: string) => axiosInstance.post<void>(`/api/user/verify-email`, {email, verificationCode}),
+    generatePasswordResetToken: (email: string) => axiosInstance.post<void>(`/api/user/generate-pwd-reset-token/${email}`, {email}),
 }
 
 const api = {Products, Warehouses, Stocks, StockChanges, Users}

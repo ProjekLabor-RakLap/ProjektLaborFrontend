@@ -107,7 +107,7 @@ export default function Register() {
             try {
                 await api.Users.registerUser(registerData);
                 setLoading(false);
-                navigate("/");
+                navigate("/verify");
             } catch (error: any) {
                 if (error.response && error.response.data) {
                     setError(error.response.data);

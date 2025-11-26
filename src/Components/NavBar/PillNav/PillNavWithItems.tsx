@@ -24,6 +24,7 @@ function PillNavFull() {
       { label: 'Warehouse', href: '/warehouse' },
       { label: 'Stock Change', href: '/stock-change' },
       { label: 'Products', href: '/products' },
+      { label: 'Stock', href: '/stock' },
       { label: 'Statistics', href: '/statistics' },
       { label: 'Admin', href: '/admin' },
       { label: 'Excel', href: '/excel' },

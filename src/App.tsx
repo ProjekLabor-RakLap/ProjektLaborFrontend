@@ -13,6 +13,7 @@ import RegisterPage from './app/Register/page';
 import ForgottenPasswordPage from './app/ForgottenPassword/page';
 import VerifyPage from 'app/Verify/page';
 import Excel from 'app/Excel/page';
+import PasswordResetPage from 'app/ResetPassword/page';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
+          <Route path="/reset-password" element={<PasswordResetPage />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/excel" element={<Excel />} />
         </Routes>

@@ -115,6 +115,18 @@ export default function Login() {
                     </Link>
                 </Typography>
 
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                    Forgot your password?{" "}
+                    <Link
+                        component="button"
+                        variant="body2"
+                        onClick={() => navigate("/reset-password")}
+                        sx={{ fontWeight: 600 }}
+                    >
+                        Reset Password
+                    </Link>
+                </Typography>
+
                 <Button
                     type="submit"
                     fullWidth
